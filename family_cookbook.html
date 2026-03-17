@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorn Family Recipes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #faf6f0;
+    --warm-tan: #e8dcc8;
+    --brown: #6b4c2a;
+    --dark-brown: #3d2b14;
+    --rust: #9b4f2a;
+    --light-rust: #c4714a;
+    --muted-green: #5a6b4a;
+    --parchment: #f2ead8;
+    --ink: #2c1f0e;
+    --faded: #8a7a68;
+  }
+
+  body { font-family: 'Lora', serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+  #password-screen {
+    position: fixed; inset: 0; background: var(--cream); display: flex; align-items: center; justify-content: center; z-index: 1000;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4a882' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .pw-box { background: var(--parchment); border: 2px solid var(--warm-tan); border-radius: 4px; padding: 3rem 2.5rem; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 4px 32px rgba(60,40,10,0.10); }
+  .pw-box .logo-text { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--dark-brown); margin-bottom: 0.25rem; font-style: italic; }
+  .pw-box .subtitle { font-size: 0.85rem; color: var(--faded); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2rem; }
+  .pw-divider { border: none; border-top: 1px solid var(--warm-tan); margin: 1.25rem 0; }
+  .pw-label { font-size: 0.8rem; color: var(--faded); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; text-align: left; }
+  #pw-input { width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--cream); font-family: 'Lora', serif; font-size: 1rem; color: var(--ink); margin-bottom: 1rem; outline: none; transition: border-color 0.2s; }
+  #pw-input:focus { border-color: var(--brown); }
+  #pw-error { color: var(--rust); font-size: 0.8rem; margin-bottom: 0.75rem; min-height: 1em; }
+  .btn-enter { width: 100%; padding: 0.75rem; background: var(--dark-brown); color: var(--parchment); border: none; border-radius: 2px; font-family: 'Lora', serif; font-size: 0.95rem; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; }
+  .btn-enter:hover { background: var(--brown); }
+
+  #site { display: none; min-height: 100vh; }
+
+  nav { background: var(--dark-brown); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--rust); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--parchment); letter-spacing: 0.02em; }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-btn { background: none; border: none; color: var(--warm-tan); font-family: 'Lora', serif; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1rem; cursor: pointer; border-radius: 2px; transition: color 0.2s, background 0.2s; }
+  .nav-btn:hover, .nav-btn.active { color: var(--parchment); background: rgba(255,255,255,0.08); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .home-hero { background: var(--parchment); padding: 5rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--warm-tan); min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .quote-wrap { max-width: 680px; margin: 0 auto 2.5rem; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .quote-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3.5vw, 2.1rem); color: var(--dark-brown); font-style: italic; line-height: 1.4; margin-bottom: 1rem; opacity: 1; transition: opacity 0.6s ease; }
+  .quote-text.fade { opacity: 0; }
+  .quote-attr { font-size: 0.82rem; color: var(--rust); letter-spacing: 0.14em; text-transform: uppercase; opacity: 1; transition: opacity 0.6s ease; }
+  .quote-attr.fade { opacity: 0; }
+  .quote-dots { display: flex; gap: 7px; justify-content: center; margin-bottom: 2.5rem; }
+  .qdot { width: 7px; height: 7px; border-radius: 50%; background: var(--warm-tan); cursor: pointer; transition: background 0.3s; border: none; padding: 0; }
+  .qdot.active { background: var(--rust); }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .btn-primary { background: var(--rust); color: var(--parchment); border: none; padding: 0.8rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background 0.2s; }
+  .btn-primary:hover { background: var(--light-rust); }
+  .btn-secondary { background: none; color: var(--brown); border: 1px solid var(--brown); padding: 0.8rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all 0.2s; }
+  .btn-secondary:hover { background: var(--brown); color: var(--parchment); }
+
+  .home-grid { max-width: 500px; margin: 3rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .stat-card { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 1.5rem; text-align: center; }
+  .stat-card .stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--rust); display: block; }
+  .stat-card .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-top: 0.25rem; }
+
+  .recent-section { max-width: 960px; margin: 0 auto 3rem; padding: 0 2rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--dark-brown); font-style: italic; margin-bottom: 0.25rem; }
+  .section-rule { border: none; border-top: 1px solid var(--warm-tan); margin: 0.75rem 0 1.5rem; }
+  .recipe-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
+  .recipe-card { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 1.25rem; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
+  .recipe-card:hover { box-shadow: 0 4px 16px rgba(60,40,10,0.12); transform: translateY(-2px); }
+  .recipe-card .card-category { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.13em; color: var(--rust); margin-bottom: 0.4rem; }
+  .recipe-card .card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--dark-brown); margin-bottom: 0.5rem; line-height: 1.3; }
+  .recipe-card .card-meta { font-size: 0.78rem; color: var(--faded); display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .loading { text-align: center; padding: 3rem; color: var(--faded); font-style: italic; }
+
+  .recipes-page { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .page-header { margin-bottom: 2rem; }
+  .search-bar-wrap { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 180px; padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--parchment); font-family: 'Lora', serif; font-size: 0.95rem; color: var(--ink); outline: none; }
+  .search-input:focus { border-color: var(--brown); }
+  .cat-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .cat-btn { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 0.35rem 0.9rem; font-family: 'Lora', serif; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brown); cursor: pointer; transition: all 0.15s; }
+  .cat-btn:hover, .cat-btn.active { background: var(--brown); color: var(--parchment); border-color: var(--brown); }
+  .recipes-count { font-size: 0.82rem; color: var(--faded); margin-bottom: 1.25rem; letter-spacing: 0.05em; }
+  .no-results { text-align: center; padding: 3rem; color: var(--faded); font-style: italic; font-size: 1.1rem; }
+
+  .recipe-detail { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .detail-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rust); margin-bottom: 0.5rem; }
+  .detail-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); color: var(--dark-brown); font-style: italic; margin-bottom: 0.75rem; line-height: 1.2; }
+  .detail-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--faded); letter-spacing: 0.08em; text-transform: uppercase; border-top: 1px solid var(--warm-tan); border-bottom: 1px solid var(--warm-tan); padding: 0.75rem 0; margin: 1rem 0 2rem; flex-wrap: wrap; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2.5rem; }
+  @media (max-width: 580px) { .detail-grid { grid-template-columns: 1fr; } }
+  .ingredients-box h3, .instructions-box h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--dark-brown); margin-bottom: 0.75rem; font-style: italic; }
+  .ingredients-box ul { list-style: none; }
+  .ingredients-box li { padding: 0.4rem 0; border-bottom: 1px dashed var(--warm-tan); font-size: 0.9rem; color: var(--ink); line-height: 1.4; }
+  .step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
+  .step-num { background: var(--rust); color: var(--parchment); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+  .step p { font-size: 0.92rem; line-height: 1.7; color: var(--ink); }
+  .back-btn { background: none; border: none; color: var(--brown); font-family: 'Lora', serif; font-size: 0.85rem; cursor: pointer; padding: 0; letter-spacing: 0.05em; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-btn:hover { color: var(--rust); }
+
+  .add-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .form-group { margin-bottom: 1.5rem; }
+  .form-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-bottom: 0.45rem; }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--parchment); font-family: 'Lora', serif; font-size: 0.95rem; color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--brown); }
+  .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+  @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+  .form-hint { font-size: 0.78rem; color: var(--faded); margin-top: 0.3rem; font-style: italic; }
+  .success-msg { background: #f0f5ea; border: 1px solid #a3c17a; color: var(--muted-green); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
+  .error-msg { background: #fdf0ee; border: 1px solid #e0a090; color: var(--rust); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
+  .saving-btn { opacity: 0.6; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div id="password-screen">
+  <div class="pw-box">
+    <div class="logo-text">Dorn Family Recipes</div>
+    <div class="subtitle">Our Family Recipe Collection</div>
+    <hr class="pw-divider">
+    <label class="pw-label" for="pw-input">Enter password</label>
+    <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="pw-error"></div>
+    <button class="btn-enter" onclick="checkPw()">Enter the Kitchen</button>
+  </div>
+</div>
+
+<div id="site">
+  <nav>
+    <div class="nav-logo">Dorn Family Recipes</div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
+      <button class="nav-btn" onclick="showPage('recipes',this)">Recipes</button>
+      <button class="nav-btn" onclick="showPage('add',this)">Add Recipe</button>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page active">
+    <div class="home-hero">
+      <div class="quote-wrap">
+        <div class="quote-text" id="quote-text"></div>
+        <div class="quote-attr" id="quote-attr"></div>
+      </div>
+      <div class="quote-dots" id="quote-dots"></div>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('recipes', document.querySelectorAll('.nav-btn')[1])">Browse Recipes</button>
+        <button class="btn-secondary" onclick="showPage('add', document.querySelectorAll('.nav-btn')[2])">Add a Recipe</button>
+      </div>
+    </div>
+    <div class="home-grid">
+      <div class="stat-card"><span class="stat-num" id="total-count">—</span><div class="stat-label">Recipes</div></div>
+      <div class="stat-card"><span class="stat-num" id="cat-count">—</span><div class="stat-label">Categories</div></div>
+    </div>
+    <div class="recent-section">
+      <div class="section-title">Recently Added</div>
+      <hr class="section-rule">
+      <div id="home-recent"><div class="loading">Loading recipes...</div></div>
+    </div>
+  </div>
+
+  <!-- RECIPES PAGE -->
+  <div id="page-recipes" class="page">
+    <div class="recipes-page">
+      <div class="page-header"><div class="section-title">All Recipes</div><hr class="section-rule"></div>
+      <div class="search-bar-wrap">
+        <input type="text" class="search-input" id="search-input" placeholder="Search recipes..." oninput="filterRecipes()">
+      </div>
+      <div class="cat-filters" id="cat-filters"></div>
+      <div class="recipes-count" id="recipes-count"></div>
+      <div class="recipe-cards" id="recipes-grid"></div>
+      <div class="no-results" id="no-results" style="display:none;">No recipes found — try a different search.</div>
+    </div>
+  </div>
+
+  <!-- RECIPE DETAIL PAGE -->
+  <div id="page-detail" class="page">
+    <div class="recipe-detail">
+      <button class="back-btn" onclick="goBackToRecipes()">← Back to Recipes</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ADD RECIPE PAGE -->
+  <div id="page-add" class="page">
+    <div class="add-page">
+      <div class="section-title">Add a New Recipe</div>
+      <hr class="section-rule" style="margin-bottom:2rem">
+      <div class="success-msg" id="success-msg">Recipe saved! Find it in the Recipes page.</div>
+      <div class="error-msg" id="error-msg">Something went wrong saving the recipe. Please try again.</div>
+
+      <div class="form-group">
+        <label class="form-label">Recipe Name *</label>
+        <input type="text" class="form-input" id="f-name" placeholder="e.g. Grandma's Apple Pie">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label">Category *</label>
+          <select class="form-select" id="f-category">
+            <option value="">Select a category...</option>
+            <option>Appetizer</option><option>Main</option><option>Side</option>
+            <option>Dessert</option><option>Beverage</option><option>Sauce/Dressing</option>
+            <option>Snack</option><option>Breakfast</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Submitted By *</label>
+          <input type="text" class="form-input" id="f-submitted-by" placeholder="Your name">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Prep Time</label><input type="text" class="form-input" id="f-prep" placeholder="e.g. 15 min"></div>
+        <div class="form-group"><label class="form-label">Cook Time</label><input type="text" class="form-input" id="f-cook" placeholder="e.g. 45 min"></div>
+        <div class="form-group"><label class="form-label">Servings</label><input type="text" class="form-input" id="f-servings" placeholder="e.g. 8"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ingredients *</label>
+        <textarea class="form-textarea" id="f-ingredients" rows="6" placeholder="2 cups flour&#10;1 tsp salt&#10;3 eggs..."></textarea>
+        <div class="form-hint">One ingredient per line</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Instructions *</label>
+        <textarea class="form-textarea" id="f-instructions" rows="8" placeholder="Preheat oven to 350°F.&#10;Mix dry ingredients together.&#10;..."></textarea>
+        <div class="form-hint">One step per line</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes / Story</label>
+        <textarea class="form-textarea" id="f-notes" rows="3" placeholder="Any family notes, tips, or the story behind this recipe..."></textarea>
+      </div>
+      <button class="btn-primary" id="save-btn" onclick="saveRecipe()" style="padding:0.9rem 2.5rem;font-size:0.95rem;">Save Recipe</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CORRECT_PASSWORD = "kaitlynisawesome";
+const SUPABASE_URL = "https://lzbxhbhheplwplfpapjh.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6YnhoYmhoZXBsd3BsZnBhcGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDY0NTcsImV4cCI6MjA4OTI4MjQ1N30.SESchX38wRIuwNMyA8m_vj9H7m8W-WXEfd8tNlqdDTA";
+
+const HEADERS = {
+  "Content-Type": "application/json",
+  "apikey": SUPABASE_KEY,
+  "Authorization": "Bearer " + SUPABASE_KEY
+};
+
+async function dbFetch(path, options = {}) {
+  const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
+    ...options,
+    headers: { ...HEADERS, ...(options.headers || {}) }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function loadRecipes() {
+  return await dbFetch("recipes?select=*&order=created_at.desc");
+}
+
+async function insertRecipe(recipe) {
+  return await dbFetch("recipes", {
+    method: "POST",
+    headers: { "Prefer": "return=representation" },
+    body: JSON.stringify(recipe)
+  });
+}
+
+// ── Quotes ──────────────────────────────────────────────
+const QUOTES = [
+  { text: "Fish are friends, not food.", attr: "Bruce the Shark — Finding Nemo, 2003" },
+  { text: "If you are what you eat, then I only want to eat the good stuff.", attr: "Remy — Ratatouille, 2007" },
+  { text: "Is butter a carb?", attr: "Regina George — Mean Girls, 2004" },
+  { text: "To eat good food is to be close to God.", attr: "Primo — Big Night, 1996" },
+  { text: "Leave the gun. Take the cannoli.", attr: "Clemenza — The Godfather, 1972" },
+  { text: "If you have a quote suggestion, please tell Kaitlyn.", attr: "Kaitlyn - 2001" }
+];
+
+let currentQuote = 0;
+let quoteTimer = null;
+
+function initQuotes() {
+  const dotsEl = document.getElementById('quote-dots');
+  dotsEl.innerHTML = QUOTES.map((_, i) =>
+    `<button class="qdot ${i===0?'active':''}" onclick="goToQuote(${i})"></button>`
+  ).join('');
+  showQuote(0, false);
+  quoteTimer = setInterval(() => advanceQuote(), 8000);
+}
+
+function showQuote(idx, animate) {
+  const textEl = document.getElementById('quote-text');
+  const attrEl = document.getElementById('quote-attr');
+  const dots = document.querySelectorAll('.qdot');
+  if (animate) {
+    textEl.classList.add('fade'); attrEl.classList.add('fade');
+    setTimeout(() => {
+      textEl.textContent = '\u201c' + QUOTES[idx].text + '\u201d';
+      attrEl.textContent = QUOTES[idx].attr;
+      textEl.classList.remove('fade'); attrEl.classList.remove('fade');
+    }, 600);
+  } else {
+    textEl.textContent = '\u201c' + QUOTES[idx].text + '\u201d';
+    attrEl.textContent = QUOTES[idx].attr;
+  }
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  currentQuote = idx;
+}
+
+function advanceQuote() { showQuote((currentQuote + 1) % QUOTES.length, true); }
+function goToQuote(idx) { clearInterval(quoteTimer); showQuote(idx, true); quoteTimer = setInterval(() => advanceQuote(), 8000); }
+
+// ── App state ────────────────────────────────────────────
+let allRecipes = [];
+let activeCategory = "All";
+
+function checkPw() {
+  const val = document.getElementById('pw-input').value;
+  if (val === CORRECT_PASSWORD) {
+    document.getElementById('password-screen').style.display = 'none';
+    document.getElementById('site').style.display = 'block';
+    initQuotes();
+    loadAndRender();
+  } else {
+    const err = document.getElementById('pw-error');
+    err.textContent = "Incorrect password. Try again.";
+    document.getElementById('pw-input').value = '';
+    setTimeout(() => err.textContent = '', 2500);
+  }
+}
+
+async function loadAndRender() {
+  try {
+    allRecipes = await loadRecipes();
+    renderHome();
+    renderRecipes();
+    buildCatFilters();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'home') renderHome();
+  if (name === 'recipes') { renderRecipes(); buildCatFilters(); }
+}
+
+function normalize(r) {
+  return {
+    id: r.id,
+    name: r.name,
+    category: r.category,
+    submittedBy: r.submitted_by,
+    prep: r.prep,
+    cook: r.cook,
+    servings: r.servings,
+    ingredients: r.ingredients || [],
+    steps: r.steps || [],
+    notes: r.notes
+  };
+}
+
+function renderHome() {
+  const recent = allRecipes.slice(0, 3).map(normalize);
+  const grid = document.getElementById('home-recent');
+  grid.innerHTML = recent.length
+    ? recent.map(r => recipeCardHTML(r)).join('')
+    : '<div class="loading">No recipes yet — add the first one!</div>';
+  document.getElementById('total-count').textContent = allRecipes.length;
+  document.getElementById('cat-count').textContent = new Set(allRecipes.map(r => r.category)).size;
+}
+
+function recipeCardHTML(r) {
+  return `<div class="recipe-card" onclick="openDetail(${r.id})">
+    <div class="card-category">${r.category}</div>
+    <div class="card-title">${r.name}</div>
+    <div class="card-meta">
+      <span>Prep: ${r.prep||'—'}</span>
+      <span>Serves: ${r.servings||'—'}</span>
+      ${r.submittedBy ? `<span>By: ${r.submittedBy}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function buildCatFilters() {
+  const cats = ['All', ...new Set(allRecipes.map(r => r.category))];
+  document.getElementById('cat-filters').innerHTML = cats.map(c =>
+    `<button class="cat-btn ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setCategory(cat) { activeCategory = cat; buildCatFilters(); filterRecipes(); }
+
+function filterRecipes() {
+  const query = document.getElementById('search-input').value.toLowerCase();
+  const filtered = allRecipes.map(normalize).filter(r =>
+    r.name.toLowerCase().includes(query) && (activeCategory==='All' || r.category===activeCategory)
+  );
+  const grid = document.getElementById('recipes-grid');
+  const noRes = document.getElementById('no-results');
+  document.getElementById('recipes-count').textContent = `${filtered.length} recipe${filtered.length!==1?'s':''}`;
+  if (filtered.length === 0) { grid.innerHTML = ''; noRes.style.display = 'block'; }
+  else { noRes.style.display = 'none'; grid.innerHTML = filtered.map(r => recipeCardHTML(r)).join(''); }
+}
+
+function renderRecipes() { filterRecipes(); }
+
+function openDetail(id) {
+  const raw = allRecipes.find(x => x.id === id);
+  if (!raw) return;
+  const r = normalize(raw);
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-category">${r.category}</div>
+    <div class="detail-title">${r.name}</div>
+    <div class="detail-meta">
+      ${r.prep ? `<span>Prep: ${r.prep}</span>` : ''}
+      ${r.cook ? `<span>Cook: ${r.cook}</span>` : ''}
+      ${r.servings ? `<span>Serves: ${r.servings}</span>` : ''}
+      ${r.submittedBy ? `<span>By: ${r.submittedBy}</span>` : ''}
+    </div>
+    ${r.notes ? `<p style="font-style:italic;color:var(--faded);font-size:0.9rem;margin-bottom:2rem;padding:0.75rem 1rem;border-left:2px solid var(--warm-tan);">${r.notes}</p>` : ''}
+    <div class="detail-grid">
+      <div class="ingredients-box"><h3>Ingredients</h3><ul>${r.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+      <div class="instructions-box"><h3>Instructions</h3>${r.steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><p>${s}</p></div>`).join('')}</div>
+    </div>`;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-detail').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.textContent === 'Recipes'));
+}
+
+function goBackToRecipes() { showPage('recipes', document.querySelectorAll('.nav-btn')[1]); }
+
+async function saveRecipe() {
+  const name = document.getElementById('f-name').value.trim();
+  const category = document.getElementById('f-category').value;
+  const submitted_by = document.getElementById('f-submitted-by').value.trim();
+  const ingredients = document.getElementById('f-ingredients').value.trim().split('\n').filter(Boolean);
+  const steps = document.getElementById('f-instructions').value.trim().split('\n').filter(Boolean);
+
+  if (!name || !category || !submitted_by || !ingredients.length || !steps.length) {
+    alert('Please fill in the name, category, submitted by, ingredients, and instructions.');
+    return;
+  }
+
+  const saveBtn = document.getElementById('save-btn');
+  saveBtn.textContent = 'Saving...';
+  saveBtn.classList.add('saving-btn');
+
+  try {
+    const newRecipe = {
+      name,
+      category,
+      submitted_by,
+      prep: document.getElementById('f-prep').value.trim(),
+      cook: document.getElementById('f-cook').value.trim(),
+      servings: document.getElementById('f-servings').value.trim(),
+      ingredients,
+      steps,
+      notes: document.getElementById('f-notes').value.trim()
+    };
+
+    const saved = await insertRecipe(newRecipe);
+    if (saved && saved.length) allRecipes.unshift(saved[0]);
+
+    buildCatFilters();
+    ['f-name','f-category','f-submitted-by','f-prep','f-cook','f-servings','f-ingredients','f-instructions','f-notes']
+      .forEach(id => { document.getElementById(id).value = ''; });
+
+    document.getElementById('success-msg').style.display = 'block';
+    document.getElementById('error-msg').style.display = 'none';
+    setTimeout(() => document.getElementById('success-msg').style.display = 'none', 4000);
+  } catch (e) {
+    console.error(e);
+    document.getElementById('error-msg').style.display = 'block';
+    document.getElementById('success-msg').style.display = 'none';
+  } finally {
+    saveBtn.textContent = 'Save Recipe';
+    saveBtn.classList.remove('saving-btn');
+  }
+}
+</script>
+</body>
+</html>
