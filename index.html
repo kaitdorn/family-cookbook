@@ -95,7 +95,7 @@
   .recipes-count { font-size: 0.82rem; color: var(--faded); margin-bottom: 1.25rem; letter-spacing: 0.05em; }
   .no-results { text-align: center; padding: 3rem; color: var(--faded); font-style: italic; font-size: 1.1rem; }
 
-  .recipe-detail { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .recipe-detail { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem; }
   .detail-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rust); margin-bottom: 0.5rem; }
   .detail-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); color: var(--dark-brown); font-style: italic; margin-bottom: 0.75rem; line-height: 1.2; }
   .detail-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--faded); letter-spacing: 0.08em; text-transform: uppercase; border-top: 1px solid var(--warm-tan); border-bottom: 1px solid var(--warm-tan); padding: 0.75rem 0; margin: 1rem 0 2rem; flex-wrap: wrap; }
@@ -122,6 +122,23 @@
   .success-msg { background: #f0f5ea; border: 1px solid #a3c17a; color: var(--muted-green); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
   .error-msg { background: #fdf0ee; border: 1px solid #e0a090; color: var(--rust); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
   .saving-btn { opacity: 0.6; pointer-events: none; }
+
+  .recipe-actions { display: flex; gap: 0.75rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+  .btn-action { display: flex; align-items: center; gap: 0.45rem; background: none; border: 1px solid var(--warm-tan); border-radius: 2px; color: var(--brown); font-family: 'Lora', serif; font-size: 0.8rem; letter-spacing: 0.09em; text-transform: uppercase; padding: 0.5rem 1.1rem; cursor: pointer; transition: all 0.18s; }
+  .btn-action:hover { background: var(--brown); color: var(--parchment); border-color: var(--brown); }
+  .btn-action svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  @media print {
+    #password-screen, nav, .back-btn, .recipe-actions { display: none !important; }
+    body { background: white !important; }
+    #site { display: block !important; }
+    .page { display: none !important; }
+    #page-detail { display: block !important; }
+    .recipe-detail { max-width: 100%; padding: 1rem; }
+    .detail-title { font-size: 2rem; }
+    .detail-grid { grid-template-columns: 1fr 2fr; }
+    .recipe-card, .stat-card { box-shadow: none; }
+  }
 </style>
 </head>
 <body>
@@ -189,7 +206,13 @@
   <!-- RECIPE DETAIL PAGE -->
   <div id="page-detail" class="page">
     <div class="recipe-detail">
-      <button class="back-btn" onclick="goBackToRecipes()">← Back to Recipes</button>
+      <button class="back-btn" onclick="goBackToRecipes()">&#8592; Back to Recipes</button>
+      <div class="recipe-actions">
+        <button class="btn-action" id="download-btn" onclick="downloadRecipePDF()" title="Save as PDF">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
+          Download PDF
+        </button>
+      </div>
       <div id="detail-content"></div>
     </div>
   </div>
@@ -445,6 +468,167 @@ function openDetail(id) {
 }
 
 function goBackToRecipes() { showPage('recipes', document.querySelectorAll('.nav-btn')[1]); }
+
+async function downloadRecipePDF() {
+  const btn = document.getElementById('download-btn');
+  btn.textContent = 'Generating...';
+  btn.style.pointerEvents = 'none';
+  btn.style.opacity = '0.6';
+
+  // Dynamically load jsPDF if not already loaded
+  if (!window.jspdf) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'letter', orientation: 'portrait' });
+
+  // Gather recipe data from the current detail view
+  const category = document.querySelector('.detail-category')?.textContent || '';
+  const title = document.querySelector('.detail-title')?.textContent || 'Recipe';
+  const metaItems = [...document.querySelectorAll('.detail-meta span')].map(s => s.textContent);
+  const notes = document.querySelector('#detail-content p[style]')?.textContent || '';
+  const ingredients = [...document.querySelectorAll('.ingredients-box li')].map(li => li.textContent.trim());
+  const steps = [...document.querySelectorAll('.step p')].map(p => p.textContent.trim());
+
+  const margin = 20;
+  const pageW = doc.internal.pageSize.getWidth();
+  const maxW = pageW - margin * 2;
+  let y = margin;
+
+  const checkPage = (needed = 8) => {
+    if (y + needed > doc.internal.pageSize.getHeight() - margin) {
+      doc.addPage(); y = margin;
+    }
+  };
+
+  // Header bar
+  doc.setFillColor(61, 43, 20); // dark-brown
+  doc.rect(0, 0, pageW, 12, 'F');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(242, 234, 216); // parchment
+  doc.text('Dorn Family Recipes', margin, 8);
+  doc.text(new Date().toLocaleDateString(), pageW - margin, 8, { align: 'right' });
+  y = 22;
+
+  // Category
+  doc.setFontSize(8);
+  doc.setTextColor(155, 79, 42); // rust
+  doc.setFont('helvetica', 'bold');
+  doc.text(category.toUpperCase(), margin, y);
+  y += 7;
+
+  // Title
+  doc.setFontSize(24);
+  doc.setTextColor(61, 43, 20);
+  doc.setFont('helvetica', 'bold');
+  const titleLines = doc.splitTextToSize(title, maxW);
+  doc.text(titleLines, margin, y);
+  y += titleLines.length * 9 + 3;
+
+  // Meta bar
+  if (metaItems.length) {
+    doc.setDrawColor(232, 220, 200);
+    doc.line(margin, y, pageW - margin, y); y += 4;
+    doc.setFontSize(8);
+    doc.setTextColor(138, 122, 104);
+    doc.setFont('helvetica', 'normal');
+    doc.text(metaItems.join('   ·   '), margin, y);
+    y += 4;
+    doc.line(margin, y, pageW - margin, y); y += 8;
+  }
+
+  // Notes
+  if (notes) {
+    doc.setFontSize(9);
+    doc.setTextColor(138, 122, 104);
+    doc.setFont('helvetica', 'italic');
+    const noteLines = doc.splitTextToSize(notes, maxW - 6);
+    doc.setDrawColor(232, 220, 200);
+    doc.line(margin, y, margin + 2, y);
+    noteLines.forEach(line => { checkPage(); doc.text(line, margin + 5, y); y += 5; });
+    y += 4;
+  }
+
+  // Two-column layout: ingredients left, instructions right
+  const col1W = maxW * 0.36;
+  const col2X = margin + col1W + 8;
+  const col2W = maxW - col1W - 8;
+  const colStartY = y;
+
+  // Ingredients column
+  doc.setFontSize(11);
+  doc.setTextColor(61, 43, 20);
+  doc.setFont('helvetica', 'bolditalic');
+  doc.text('Ingredients', margin, y);
+  y += 6;
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(44, 31, 14);
+  let ingY = y;
+  ingredients.forEach(ing => {
+    if (ingY + 5 > doc.internal.pageSize.getHeight() - margin) { ingY = colStartY; }
+    doc.setDrawColor(232, 220, 200);
+    doc.line(margin, ingY + 1.5, margin + col1W, ingY + 1.5);
+    const wrapped = doc.splitTextToSize(ing, col1W);
+    wrapped.forEach(line => { doc.text(line, margin, ingY); ingY += 4.5; });
+    ingY += 0.5;
+  });
+
+  // Instructions column
+  let insY = colStartY;
+  doc.setFontSize(11);
+  doc.setTextColor(61, 43, 20);
+  doc.setFont('helvetica', 'bolditalic');
+  doc.text('Instructions', col2X, insY);
+  insY += 6;
+  steps.forEach((step, i) => {
+    if (insY + 8 > doc.internal.pageSize.getHeight() - margin) {
+      doc.addPage(); insY = margin;
+    }
+    // Step number circle (approximated with a small filled circle)
+    doc.setFillColor(155, 79, 42);
+    doc.circle(col2X + 3, insY - 1.5, 3, 'F');
+    doc.setFontSize(7);
+    doc.setTextColor(242, 234, 216);
+    doc.setFont('helvetica', 'bold');
+    doc.text(String(i + 1), col2X + 3, insY - 0.5, { align: 'center' });
+
+    doc.setFontSize(8.5);
+    doc.setTextColor(44, 31, 14);
+    doc.setFont('helvetica', 'normal');
+    const stepLines = doc.splitTextToSize(step, col2W - 8);
+    stepLines.forEach(line => {
+      if (insY + 5 > doc.internal.pageSize.getHeight() - margin) { doc.addPage(); insY = margin; }
+      doc.text(line, col2X + 8, insY);
+      insY += 5;
+    });
+    insY += 3;
+  });
+
+  // Footer
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    doc.setFontSize(7);
+    doc.setTextColor(138, 122, 104);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Page ${p} of ${totalPages}`, pageW - margin, doc.internal.pageSize.getHeight() - 8, { align: 'right' });
+  }
+
+  const safeName = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  doc.save(`${safeName}.pdf`);
+
+  btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg> Download PDF`;
+  btn.style.pointerEvents = '';
+  btn.style.opacity = '';
+}
 
 async function saveRecipe() {
   const name = document.getElementById('f-name').value.trim();
