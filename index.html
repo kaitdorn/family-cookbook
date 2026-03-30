@@ -246,7 +246,7 @@
           <label class="form-label">Category *</label>
           <select class="form-select" id="f-category">
             <option value="">Select a category...</option>
-            <option>BBQ</option><option>Beverage</option><option>Bread</option><option>Breakfast</option>
+            <option>Beverage</option><option>Bread</option><option>Breakfast</option>
             <option>Cake</option><option>Candy & Confections</option><option>Chicken</option>
             <option>Cookies</option><option>Dip</option><option>Dressing</option>
             <option>Fish</option><option>Pasta</option><option>Pastries</option>
@@ -276,8 +276,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Prep Time</label><input type="text" class="form-input" id="f-prep" placeholder="e.g. 15 min"></div>
-        <div class="form-group"><label class="form-label">Cook Time</label><input type="text" class="form-input" id="f-cook" placeholder="e.g. 45 min"></div>
+        <div class="form-group"><label class="form-label">Time</label><input type="text" class="form-input" id="f-time" placeholder="e.g. 1 hour 30 min"></div>
         <div class="form-group"><label class="form-label">Servings</label><input type="text" class="form-input" id="f-servings" placeholder="e.g. 8"></div>
       </div>
       <div class="form-group">
@@ -424,8 +423,7 @@ function normalize(r) {
     cuisine: r.cuisine || '',
     course: r.course || '',
     submittedBy: r.submitted_by,
-    prep: r.prep,
-    cook: r.cook,
+    time: r.time,
     servings: r.servings,
     ingredients: r.ingredients || [],
     steps: r.steps || [],
@@ -450,7 +448,7 @@ function recipeCardHTML(r) {
     <div class="card-category">${tags}</div>
     <div class="card-title">${r.name}</div>
     <div class="card-meta">
-      <span>Prep: ${r.prep||'—'}</span>
+      <span>Time: ${r.time||'—'}</span>
       <span>Serves: ${r.servings||'—'}</span>
       ${r.submittedBy ? `<span>By: ${r.submittedBy}</span>` : ''}
     </div>
@@ -581,8 +579,7 @@ function openDetail(id) {
     <div class="detail-category">${tags}</div>
     <div class="detail-title">${r.name}</div>
     <div class="detail-meta">
-      ${r.prep ? `<span>Prep: ${r.prep}</span>` : ''}
-      ${r.cook ? `<span>Cook: ${r.cook}</span>` : ''}
+      ${r.time ? `<span>Time: ${r.time}</span>` : ''}
       ${r.servings ? `<span>Serves: ${r.servings}</span>` : ''}
       ${r.submittedBy ? `<span>By: ${r.submittedBy}</span>` : ''}
     </div>
@@ -790,8 +787,7 @@ async function saveRecipe() {
       submitted_by,
       cuisine: cuisine || null,
       course: course || null,
-      prep: document.getElementById('f-prep').value.trim(),
-      cook: document.getElementById('f-cook').value.trim(),
+      time: document.getElementById('f-time').value.trim(),
       servings: document.getElementById('f-servings').value.trim(),
       ingredients,
       steps,
@@ -803,7 +799,7 @@ async function saveRecipe() {
 
     populateCuisineSuggestions();
     buildCatFilters();
-    ['f-name','f-category','f-submitted-by','f-cuisine','f-course','f-prep','f-cook','f-servings','f-ingredients','f-instructions','f-notes']
+    ['f-name','f-category','f-submitted-by','f-cuisine','f-course','f-time','f-servings','f-ingredients','f-instructions','f-notes']
       .forEach(id => { document.getElementById(id).value = ''; });
 
     document.getElementById('success-msg').style.display = 'block';
