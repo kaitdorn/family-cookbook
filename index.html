@@ -92,6 +92,12 @@
   .cat-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
   .cat-btn { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 0.35rem 0.9rem; font-family: 'Lora', serif; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brown); cursor: pointer; transition: all 0.15s; }
   .cat-btn:hover, .cat-btn.active { background: var(--brown); color: var(--parchment); border-color: var(--brown); }
+  .filter-dropdowns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  @media (max-width: 520px) { .filter-dropdowns { grid-template-columns: 1fr; } }
+  .filter-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .filter-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faded); }
+  .filter-select { padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--parchment); font-family: 'Lora', serif; font-size: 0.9rem; color: var(--ink); outline: none; cursor: pointer; transition: border-color 0.2s; }
+  .filter-select:focus { border-color: var(--brown); }
   .recipes-count { font-size: 0.82rem; color: var(--faded); margin-bottom: 1.25rem; letter-spacing: 0.05em; }
   .no-results { text-align: center; padding: 3rem; color: var(--faded); font-style: italic; font-size: 1.1rem; }
 
@@ -196,7 +202,12 @@
       <div class="search-bar-wrap">
         <input type="text" class="search-input" id="search-input" placeholder="Search recipes..." oninput="filterRecipes()">
       </div>
+      <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Category</div>
       <div class="cat-filters" id="cat-filters"></div>
+      <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Cuisine</div>
+      <div class="cat-filters" id="cuisine-filters"></div>
+      <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Course</div>
+      <div class="cat-filters" id="course-filters"></div>
       <div class="recipes-count" id="recipes-count"></div>
       <div class="recipe-cards" id="recipes-grid"></div>
       <div class="no-results" id="no-results" style="display:none;">No recipes found — try a different search.</div>
@@ -234,14 +245,33 @@
           <label class="form-label">Category *</label>
           <select class="form-select" id="f-category">
             <option value="">Select a category...</option>
-            <option>Appetizer</option><option>Main</option><option>Side</option>
-            <option>Dessert</option><option>Beverage</option><option>Alcoholic Beverage</option><option>Sauce/Dressing</option>
-            <option>Snack</option><option>Breakfast</option><option>Bread</option><option>Salsa</option><option>Other</option>
+            <option>Beverage</option><option>Bread</option><option>Breakfast</option>
+            <option>Cake</option><option>Candy & Confections</option><option>Chicken</option>
+            <option>Cookies</option><option>Dip</option><option>Dressing</option>
+            <option>Fish</option><option>Pasta</option><option>Pastries</option>
+            <option>Rice</option><option>Salad</option><option>Salsa</option>
+            <option>Sauce</option><option>Soup</option><option>Steak</option>
+            <option>Vegetarian</option><option>Other</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Submitted By *</label>
           <input type="text" class="form-input" id="f-submitted-by" placeholder="Your name">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label">Cuisine <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
+          <input type="text" class="form-input" id="f-cuisine" list="cuisine-suggestions" placeholder="e.g. Italian, Thai, Mexican...">
+          <datalist id="cuisine-suggestions"></datalist>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Course <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
+          <select class="form-select" id="f-course">
+            <option value="">Select a course...</option>
+            <option>Main</option><option>Side</option><option>Appetizer</option>
+            <option>Dessert</option><option>Snack</option>
+          </select>
         </div>
       </div>
       <div class="form-row">
@@ -367,6 +397,7 @@ function checkPw() {
 async function loadAndRender() {
   try {
     allRecipes = await loadRecipes();
+    populateCuisineSuggestions();
     renderHome();
     renderRecipes();
     buildCatFilters();
@@ -389,6 +420,8 @@ function normalize(r) {
     id: r.id,
     name: r.name,
     category: r.category,
+    cuisine: r.cuisine || '',
+    course: r.course || '',
     submittedBy: r.submitted_by,
     prep: r.prep,
     cook: r.cook,
@@ -410,8 +443,9 @@ function renderHome() {
 }
 
 function recipeCardHTML(r) {
+  const tags = [r.category, r.cuisine, r.course].filter(Boolean).join(' · ');
   return `<div class="recipe-card" onclick="openDetail(${r.id})">
-    <div class="card-category">${r.category}</div>
+    <div class="card-category">${tags}</div>
     <div class="card-title">${r.name}</div>
     <div class="card-meta">
       <span>Prep: ${r.prep||'—'}</span>
@@ -421,19 +455,111 @@ function recipeCardHTML(r) {
   </div>`;
 }
 
-function buildCatFilters() {
-  const cats = ['All', ...new Set(allRecipes.map(r => r.category))];
-  document.getElementById('cat-filters').innerHTML = cats.map(c =>
-    `<button class="cat-btn ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</button>`
-  ).join('');
+let activeCuisine = "All";
+let activeCourse = "All";
+
+function sortOptions(arr) {
+  const others = arr.filter(x => x.toLowerCase() === 'other');
+  const rest = arr.filter(x => x.toLowerCase() !== 'other').sort();
+  return [...rest, ...others];
 }
 
-function setCategory(cat) { activeCategory = cat; buildCatFilters(); filterRecipes(); }
+function buildCatFilters() {
+  const norm = allRecipes.map(normalize);
+
+  const catsVisible = sortOptions([...new Set(norm.filter(r =>
+    (activeCuisine === 'All' || r.cuisine === activeCuisine) &&
+    (activeCourse === 'All' || r.course === activeCourse)
+  ).map(r => r.category).filter(Boolean))]);
+
+  const cuisinesVisible = sortOptions([...new Set(norm.filter(r =>
+    (activeCategory === 'All' || r.category === activeCategory) &&
+    (activeCourse === 'All' || r.course === activeCourse)
+  ).map(r => r.cuisine).filter(Boolean))]);
+
+  const coursesVisible = sortOptions([...new Set(norm.filter(r =>
+    (activeCategory === 'All' || r.category === activeCategory) &&
+    (activeCuisine === 'All' || r.cuisine === activeCuisine)
+  ).map(r => r.course).filter(Boolean))]);
+
+  document.getElementById('cat-filters').innerHTML =
+    ['All', ...catsVisible].map(c =>
+      `<button class="cat-btn ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</button>`
+    ).join('');
+
+  document.getElementById('cuisine-filters').innerHTML =
+    ['All', ...cuisinesVisible].map(c =>
+      `<button class="cat-btn ${c===activeCuisine?'active':''}" onclick="setCuisine('${c}')">${c}</button>`
+    ).join('');
+
+  document.getElementById('course-filters').innerHTML =
+    ['All', ...coursesVisible].map(c =>
+      `<button class="cat-btn ${c===activeCourse?'active':''}" onclick="setCourse('${c}')">${c}</button>`
+    ).join('');
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  // If the currently active cuisine/course no longer exists in the new filtered set, reset them
+  const norm = allRecipes.map(normalize);
+  const cuisinesStillValid = new Set(norm.filter(r =>
+    (cat === 'All' || r.category === cat) &&
+    (activeCourse === 'All' || r.course === activeCourse)
+  ).map(r => r.cuisine).filter(Boolean));
+  if (activeCuisine !== 'All' && !cuisinesStillValid.has(activeCuisine)) activeCuisine = 'All';
+
+  const coursesStillValid = new Set(norm.filter(r =>
+    (cat === 'All' || r.category === cat) &&
+    (activeCuisine === 'All' || r.cuisine === activeCuisine)
+  ).map(r => r.course).filter(Boolean));
+  if (activeCourse !== 'All' && !coursesStillValid.has(activeCourse)) activeCourse = 'All';
+
+  buildCatFilters(); filterRecipes();
+}
+
+function setCuisine(c) {
+  activeCuisine = c;
+  const norm = allRecipes.map(normalize);
+  const catsStillValid = new Set(norm.filter(r =>
+    (c === 'All' || r.cuisine === c) &&
+    (activeCourse === 'All' || r.course === activeCourse)
+  ).map(r => r.category).filter(Boolean));
+  if (activeCategory !== 'All' && !catsStillValid.has(activeCategory)) activeCategory = 'All';
+
+  const coursesStillValid = new Set(norm.filter(r =>
+    (activeCategory === 'All' || r.category === activeCategory) &&
+    (c === 'All' || r.cuisine === c)
+  ).map(r => r.course).filter(Boolean));
+  if (activeCourse !== 'All' && !coursesStillValid.has(activeCourse)) activeCourse = 'All';
+
+  buildCatFilters(); filterRecipes();
+}
+
+function setCourse(c) {
+  activeCourse = c;
+  const norm = allRecipes.map(normalize);
+  const catsStillValid = new Set(norm.filter(r =>
+    (activeCategory === 'All' || r.category === activeCategory) &&
+    (activeCuisine === 'All' || r.cuisine === activeCuisine)
+  ).map(r => r.category).filter(Boolean));
+  if (activeCategory !== 'All' && !catsStillValid.has(activeCategory)) activeCategory = 'All';
+
+  const cuisinesStillValid = new Set(norm.filter(r =>
+    (activeCategory === 'All' || r.category === activeCategory) &&
+    (c === 'All' || r.course === c)
+  ).map(r => r.cuisine).filter(Boolean));
+  if (activeCuisine !== 'All' && !cuisinesStillValid.has(activeCuisine)) activeCuisine = 'All';
+
+  buildCatFilters(); filterRecipes();
+}
 
 function filterRecipes() {
   const query = document.getElementById('search-input').value.toLowerCase();
   const filtered = allRecipes.map(normalize).filter(r =>
-    r.name.toLowerCase().includes(query) && (activeCategory==='All' || r.category===activeCategory)
+    r.name.toLowerCase().includes(query) &&
+    (activeCategory === 'All' || r.category === activeCategory) &&
+    (activeCuisine === 'All' || r.cuisine === activeCuisine) &&
+    (activeCourse === 'All' || r.course === activeCourse)
   );
   const grid = document.getElementById('recipes-grid');
   const noRes = document.getElementById('no-results');
@@ -448,8 +574,9 @@ function openDetail(id) {
   const raw = allRecipes.find(x => x.id === id);
   if (!raw) return;
   const r = normalize(raw);
+  const tags = [r.category, r.cuisine, r.course].filter(Boolean).join(' · ');
   document.getElementById('detail-content').innerHTML = `
-    <div class="detail-category">${r.category}</div>
+    <div class="detail-category">${tags}</div>
     <div class="detail-title">${r.name}</div>
     <div class="detail-meta">
       ${r.prep ? `<span>Prep: ${r.prep}</span>` : ''}
@@ -630,12 +757,20 @@ async function downloadRecipePDF() {
   btn.style.opacity = '';
 }
 
+function populateCuisineSuggestions() {
+  const cuisines = [...new Set(allRecipes.map(r => r.cuisine).filter(Boolean))].sort();
+  const dl = document.getElementById('cuisine-suggestions');
+  if (dl) dl.innerHTML = cuisines.map(c => `<option value="${c}">`).join('');
+}
+
 async function saveRecipe() {
   const name = document.getElementById('f-name').value.trim();
   const category = document.getElementById('f-category').value;
   const submitted_by = document.getElementById('f-submitted-by').value.trim();
   const ingredients = document.getElementById('f-ingredients').value.trim().split('\n').filter(Boolean);
   const steps = document.getElementById('f-instructions').value.trim().split('\n').filter(Boolean);
+  const cuisine = document.getElementById('f-cuisine').value.trim();
+  const course = document.getElementById('f-course').value;
 
   if (!name || !category || !submitted_by || !ingredients.length || !steps.length) {
     alert('Please fill in the name, category, submitted by, ingredients, and instructions.');
@@ -651,6 +786,8 @@ async function saveRecipe() {
       name,
       category,
       submitted_by,
+      cuisine: cuisine || null,
+      course: course || null,
       prep: document.getElementById('f-prep').value.trim(),
       cook: document.getElementById('f-cook').value.trim(),
       servings: document.getElementById('f-servings').value.trim(),
@@ -662,8 +799,9 @@ async function saveRecipe() {
     const saved = await insertRecipe(newRecipe);
     if (saved && saved.length) allRecipes.unshift(saved[0]);
 
+    populateCuisineSuggestions();
     buildCatFilters();
-    ['f-name','f-category','f-submitted-by','f-prep','f-cook','f-servings','f-ingredients','f-instructions','f-notes']
+    ['f-name','f-category','f-submitted-by','f-cuisine','f-course','f-prep','f-cook','f-servings','f-ingredients','f-instructions','f-notes']
       .forEach(id => { document.getElementById(id).value = ''; });
 
     document.getElementById('success-msg').style.display = 'block';
