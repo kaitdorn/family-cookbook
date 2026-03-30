@@ -67,7 +67,7 @@
   .btn-secondary { background: none; color: var(--brown); border: 1px solid var(--brown); padding: 0.8rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all 0.2s; }
   .btn-secondary:hover { background: var(--brown); color: var(--parchment); }
 
-  .home-grid { max-width: 500px; margin: 3rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .home-grid { max-width: 700px; margin: 3rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
   .stat-card { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 1.5rem; text-align: center; }
   .stat-card .stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--rust); display: block; }
   .stat-card .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-top: 0.25rem; }
@@ -187,6 +187,7 @@
     <div class="home-grid">
       <div class="stat-card"><span class="stat-num" id="total-count">—</span><div class="stat-label">Recipes</div></div>
       <div class="stat-card"><span class="stat-num" id="cat-count">—</span><div class="stat-label">Categories</div></div>
+      <div class="stat-card"><span class="stat-num" id="cuisine-count">—</span><div class="stat-label">Cuisines</div></div>
     </div>
     <div class="recent-section">
       <div class="section-title">Recently Added</div>
@@ -440,6 +441,7 @@ function renderHome() {
     : '<div class="loading">No recipes yet — add the first one!</div>';
   document.getElementById('total-count').textContent = allRecipes.length;
   document.getElementById('cat-count').textContent = new Set(allRecipes.map(r => r.category)).size;
+  document.getElementById('cuisine-count').textContent = new Set(allRecipes.map(r => r.cuisine).filter(Boolean)).size;
 }
 
 function recipeCardHTML(r) {
