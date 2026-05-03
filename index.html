@@ -1,34 +1,47 @@
 <!DOCTYPE html>
+<!-- hi!! if you are reading this, welcome to my website :) -->
+<!-- i made this for my family so we can all share recipes -->
+<!-- it took me forever but i think it looks pretty good!! -->
+<!-- please don't judge the code i'm still learning lol -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dorn Family Recipes</title>
 <style>
+  /* i got this font from google, it looks fancy like a cookbook!! */
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 
+  /* this resets everything - i copy this from every tutorial lol */
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* these are my colors!! i spent like 2 hours picking them */
+  /* they're supposed to look like an old cookbook or something */
   :root {
-    --cream: #faf6f0;
-    --warm-tan: #e8dcc8;
-    --brown: #6b4c2a;
-    --dark-brown: #3d2b14;
-    --rust: #9b4f2a;
-    --light-rust: #c4714a;
-    --muted-green: #5a6b4a;
-    --parchment: #f2ead8;
-    --ink: #2c1f0e;
-    --faded: #8a7a68;
+    --cream: #faf6f0;        /* background, like old paper */
+    --warm-tan: #e8dcc8;     /* borders n stuff */
+    --brown: #6b4c2a;        /* medium brown */
+    --dark-brown: #3d2b14;   /* very brown. so brown. */
+    --rust: #9b4f2a;         /* this is my favorite color on here */
+    --light-rust: #c4714a;   /* lighter rust for hover effects (i learned what hover means!!) */
+    --muted-green: #5a6b4a;  /* only used once i think but i'm keeping it */
+    --parchment: #f2ead8;    /* cards and boxes */
+    --ink: #2c1f0e;          /* text color, dark brown not black */
+    --faded: #8a7a68;        /* for like.. less important text */
   }
 
+  /* the whole page body */
   body { font-family: 'Lora', serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
 
+  /* PASSWORD SCREEN - so randos can't see grandma's chili recipe lol */
+  /* the background pattern is an SVG i found online. i have no idea how SVG works */
+  /* but it looks like little plus signs which is cute */
   #password-screen {
     position: fixed; inset: 0; background: var(--cream); display: flex; align-items: center; justify-content: center; z-index: 1000;
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4a882' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
+  /* the little login box */
   .pw-box { background: var(--parchment); border: 2px solid var(--warm-tan); border-radius: 4px; padding: 3rem 2.5rem; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 4px 32px rgba(60,40,10,0.10); }
   .pw-box .logo-text { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--dark-brown); margin-bottom: 0.25rem; font-style: italic; }
   .pw-box .subtitle { font-size: 0.85rem; color: var(--faded); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2rem; }
@@ -40,9 +53,12 @@
   .btn-enter { width: 100%; padding: 0.75rem; background: var(--dark-brown); color: var(--parchment); border: none; border-radius: 2px; font-family: 'Lora', serif; font-size: 0.95rem; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; }
   .btn-enter:hover { background: var(--brown); }
 
+  /* this hides the main site until you log in - very secure technology */
   #site { display: none; min-height: 100vh; }
 
   /* ── NAV ── */
+  /* i fixed a bug where the title was going off screen on phones!! */
+  /* took me literally 3 days to figure out "clamp" was a thing */
   nav {
     background: var(--dark-brown);
     padding: 0 1.5rem;
@@ -51,13 +67,13 @@
     justify-content: space-between;
     gap: 0.75rem;
     min-height: 64px;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* THIS IS THE IMPORTANT ONE. flex-wrap saves lives */
     border-bottom: 3px solid var(--rust);
   }
   .nav-logo {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: clamp(1rem, 4vw, 1.4rem);
+    font-size: clamp(1rem, 4vw, 1.4rem); /* clamp!! i finally understand clamp!! */
     color: var(--parchment);
     letter-spacing: 0.02em;
     flex-shrink: 1;
@@ -75,14 +91,19 @@
   }
   .nav-btn:hover, .nav-btn.active { color: var(--parchment); background: rgba(255,255,255,0.08); }
 
+  /* extra small phones (hi grandma) */
   @media (max-width: 400px) {
     nav { padding: 0.5rem 1rem; }
     .nav-btn { padding: 0.45rem 0.5rem; letter-spacing: 0.04em; }
   }
 
+  /* pages are hidden by default, .active makes them show up */
+  /* i was so proud when i figured this out instead of making separate html files lol */
   .page { display: none; }
   .page.active { display: block; }
 
+  /* HOME PAGE - the big pretty section at the top with the quote */
+  /* the quote rotates automatically which i thought was SO cool when i made it work */
   .home-hero { background: var(--parchment); padding: 5rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--warm-tan); min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .quote-wrap { max-width: 680px; margin: 0 auto 2.5rem; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .quote-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3.5vw, 2.1rem); color: var(--dark-brown); font-style: italic; line-height: 1.4; margin-bottom: 1rem; opacity: 1; transition: opacity 0.6s ease; }
@@ -107,9 +128,11 @@
   .recent-section { max-width: 960px; margin: 0 auto 3rem; padding: 0 2rem; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--dark-brown); font-style: italic; margin-bottom: 0.25rem; }
   .section-rule { border: none; border-top: 1px solid var(--warm-tan); margin: 0.75rem 0 1.5rem; }
+  /* recipe cards - click them to see the full recipe! */
   .recipe-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
+  /* auto-fill minmax is the coolest css trick i know. i use it every chance i get now */
   .recipe-card { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 1.25rem; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
-  .recipe-card:hover { box-shadow: 0 4px 16px rgba(60,40,10,0.12); transform: translateY(-2px); }
+  .recipe-card:hover { box-shadow: 0 4px 16px rgba(60,40,10,0.12); transform: translateY(-2px); } /* little lift on hover :) */
   .recipe-card .card-category { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.13em; color: var(--rust); margin-bottom: 0.4rem; }
   .recipe-card .card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--dark-brown); margin-bottom: 0.5rem; line-height: 1.3; }
   .recipe-card .card-meta { font-size: 0.78rem; color: var(--faded); display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -148,6 +171,8 @@
   .back-btn { background: none; border: none; color: var(--brown); font-family: 'Lora', serif; font-size: 0.85rem; cursor: pointer; padding: 0; letter-spacing: 0.05em; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.4rem; }
   .back-btn:hover { color: var(--rust); }
 
+  /* ADD RECIPE FORM STYLES */
+  /* i tried to make this look professional. did it work?? */
   .add-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
   .form-group { margin-bottom: 1.5rem; }
   .form-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-bottom: 0.45rem; }
@@ -184,7 +209,7 @@
 <div id="password-screen">
   <div class="pw-box">
     <div class="logo-text">Family Recipes</div>
-    <div class="subtitle">Our Family Recipe Collection</div>
+    <div class="subtitle">Our Family Recipe Collection :)</div>
     <hr class="pw-divider">
     <label class="pw-label" for="pw-input">password</label>
     <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()">
@@ -331,16 +356,44 @@
 </div>
 
 <script>
+// 🥚 EASTER EGG for anyone snooping around in the console 🥚
+console.log(`%c
+██████╗  ██████╗ ██████╗ ███╗   ██╗    ███████╗ █████╗ ███╗   ███╗██╗██╗  ██╗   ██╗
+██╔══██╗██╔═══██╗██╔══██╗████╗  ██║    ██╔════╝██╔══██╗████╗ ████║██║██║  ╚██╗ ██╔╝
+██║  ██║██║   ██║██████╔╝██╔██╗ ██║    █████╗  ███████║██╔████╔██║██║██║   ╚████╔╝ 
+██║  ██║██║   ██║██╔══██╗██║╚██╗██║    ██╔══╝  ██╔══██║██║╚██╔╝██║██║██║    ╚██╔╝  
+██████╔╝╚██████╔╝██║  ██║██║ ╚████║    ██║     ██║  ██║██║ ╚═╝ ██║██║███████╗██║   
+╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚═╝  
+`, 'color: #9b4f2a; font-family: monospace;');
+console.log('%c👋 oh hi!! you found the console!', 'font-size: 16px; font-weight: bold; color: #3d2b14;');
+console.log('%ci made this website to share my family\'s recipes :)', 'font-size: 13px; color: #6b4c2a;');
+console.log('%cif you\'re a developer and you see something horrifying in this code,', 'font-size: 13px; color: #6b4c2a;');
+console.log('%cplease know that i tried my best and i\'m still learning', 'font-size: 13px; color: #6b4c2a;');
+console.log('%c                                        — Kait', 'font-size: 13px; font-style: italic; color: #9b4f2a;');
+console.log('%c(p.s. yes the password is in the source code. no i\'m not fixing it.)', 'font-size: 11px; color: #8a7a68;');
+
+// ok so the password is stored here in the code which i know is bad
+// but its a family recipe site not a bank lol, chill
+// hi hackers!! enjoy grandma's pot roast i guess
 const CORRECT_PASSWORD = "skker1991";
+
+// supabase is a website that stores my data in a database
+// i watched a 47 minute youtube video to understand this
+// i still don't fully understand it but it works!!
 const SUPABASE_URL = "https://lzbxhbhheplwplfpapjh.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6YnhoYmhoZXBsd3BsZnBhcGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDY0NTcsImV4cCI6MjA4OTI4MjQ1N30.SESchX38wRIuwNMyA8m_vj9H7m8W-WXEfd8tNlqdDTA";
+// ^ this is the "anon" key which supabase says is ok to put in public code
+// i hope they're right
 
+// these headers go on every request. i don't know why, i just copy them every time
 const HEADERS = {
   "Content-Type": "application/json",
   "apikey": SUPABASE_KEY,
   "Authorization": "Bearer " + SUPABASE_KEY
 };
 
+// this function talks to supabase
+// "async/await" is my favorite thing i've learned. before this i had "callback hell" which was awful
 async function dbFetch(path, options = {}) {
   const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
     ...options,
@@ -351,19 +404,23 @@ async function dbFetch(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
+// gets all recipes, newest first
 async function loadRecipes() {
   return await dbFetch("recipes?select=*&order=created_at.desc");
 }
 
+// saves a new recipe to the database
 async function insertRecipe(recipe) {
   return await dbFetch("recipes", {
     method: "POST",
-    headers: { "Prefer": "return=representation" },
+    headers: { "Prefer": "return=representation" }, // this line makes it return the saved recipe. took me ages to find this
     body: JSON.stringify(recipe)
   });
 }
 
 // ── Quotes ──────────────────────────────────────────────
+// rotating quotes on the homepage!! this was my idea and i love it
+// they're all food related movie quotes :)
 const QUOTES = [
   { text: "Fish are friends, not food.", attr: "Bruce the Shark — Finding Nemo, 2003" },
   { text: "If you are what you eat, then I only want to eat the good stuff.", attr: "Remy — Ratatouille, 2007" },
@@ -408,9 +465,13 @@ function advanceQuote() { showQuote((currentQuote + 1) % QUOTES.length, true); }
 function goToQuote(idx) { clearInterval(quoteTimer); showQuote(idx, true); quoteTimer = setInterval(() => advanceQuote(), 8000); }
 
 // ── App state ────────────────────────────────────────────
+// these are "global variables" which my cousin says is bad practice
+// but i don't know where else to put them so here we are
 let allRecipes = [];
-let activeCategory = "All";
+let activeCategory = "All"; // "All" means show everything
 
+// checks if the password is right
+// if wrong, shows an error message and clears the input
 function checkPw() {
   const val = document.getElementById('pw-input').value;
   if (val === CORRECT_PASSWORD) {
@@ -426,6 +487,7 @@ function checkPw() {
   }
 }
 
+// loads all the recipes from supabase and draws everything on screen
 async function loadAndRender() {
   try {
     allRecipes = await loadRecipes();
@@ -434,10 +496,13 @@ async function loadAndRender() {
     renderRecipes();
     buildCatFilters();
   } catch (e) {
+    // if this breaks, something is very wrong with supabase or the internet
     console.error(e);
   }
 }
 
+// this swaps between pages without reloading!! single page app!! very cool!!
+// i watched a whole video about react before realizing i could just do this with css lol
 function showPage(name, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -447,6 +512,8 @@ function showPage(name, btn) {
   if (name === 'recipes') { renderRecipes(); buildCatFilters(); }
 }
 
+// this converts the raw database object into something nicer to work with
+// "normalize" is probably not the right word for this but it sounds smart
 function normalize(r) {
   return {
     id: r.id,
@@ -490,6 +557,8 @@ function recipeCardHTML(r) {
 let activeCuisine = "All";
 let activeCourse = "All";
 
+// sorts options alphabetically but puts "Other" at the end every time
+// because "Other" should always be last, that's just good manners
 function sortOptions(arr) {
   const others = arr.filter(x => x.toLowerCase() === 'other');
   const rest = arr.filter(x => x.toLowerCase() !== 'other').sort();
@@ -781,6 +850,9 @@ function populateCuisineSuggestions() {
   if (dl) dl.innerHTML = cuisines.map(c => `<option value="${c}">`).join('');
 }
 
+// saves a new recipe!! this was the hardest function to write
+// i had to figure out how to send data to supabase AND update the page at the same time
+// my brain hurt after this one
 async function saveRecipe() {
   const name = document.getElementById('f-name').value.trim();
   const category = document.getElementById('f-category').value;
@@ -836,4 +908,3 @@ async function saveRecipe() {
 </script>
 </body>
 </html>
-
