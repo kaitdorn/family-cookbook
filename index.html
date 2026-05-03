@@ -42,11 +42,43 @@
 
   #site { display: none; min-height: 100vh; }
 
-  nav { background: var(--dark-brown); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--rust); }
-  .nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--parchment); letter-spacing: 0.02em; }
-  .nav-links { display: flex; gap: 0.25rem; }
-  .nav-btn { background: none; border: none; color: var(--warm-tan); font-family: 'Lora', serif; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1rem; cursor: pointer; border-radius: 2px; transition: color 0.2s, background 0.2s; }
+  /* ── NAV ── */
+  nav {
+    background: var(--dark-brown);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 64px;
+    flex-wrap: wrap;
+    border-bottom: 3px solid var(--rust);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    color: var(--parchment);
+    letter-spacing: 0.02em;
+    flex-shrink: 1;
+    min-width: 0;
+    line-height: 1.3;
+    padding: 0.5rem 0;
+  }
+  .nav-links { display: flex; gap: 0.25rem; flex-shrink: 0; }
+  .nav-btn {
+    background: none; border: none; color: var(--warm-tan);
+    font-family: 'Lora', serif; font-size: clamp(0.72rem, 2.5vw, 0.85rem);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.5rem 0.65rem; cursor: pointer; border-radius: 2px;
+    transition: color 0.2s, background 0.2s; white-space: nowrap;
+  }
   .nav-btn:hover, .nav-btn.active { color: var(--parchment); background: rgba(255,255,255,0.08); }
+
+  @media (max-width: 400px) {
+    nav { padding: 0.5rem 1rem; }
+    .nav-btn { padding: 0.45rem 0.5rem; letter-spacing: 0.04em; }
+  }
 
   .page { display: none; }
   .page.active { display: block; }
@@ -500,7 +532,6 @@ function buildCatFilters() {
 
 function setCategory(cat) {
   activeCategory = cat;
-  // If the currently active cuisine/course no longer exists in the new filtered set, reset them
   const norm = allRecipes.map(normalize);
   const cuisinesStillValid = new Set(norm.filter(r =>
     (cat === 'All' || r.category === cat) &&
@@ -601,7 +632,6 @@ async function downloadRecipePDF() {
   btn.style.pointerEvents = 'none';
   btn.style.opacity = '0.6';
 
-  // Dynamically load jsPDF if not already loaded
   if (!window.jspdf) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
@@ -614,7 +644,6 @@ async function downloadRecipePDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'letter', orientation: 'portrait' });
 
-  // Gather recipe data from the current detail view
   const category = document.querySelector('.detail-category')?.textContent || '';
   const title = document.querySelector('.detail-title')?.textContent || 'Recipe';
   const metaItems = [...document.querySelectorAll('.detail-meta span')].map(s => s.textContent);
@@ -633,24 +662,21 @@ async function downloadRecipePDF() {
     }
   };
 
-  // Header bar
-  doc.setFillColor(61, 43, 20); // dark-brown
+  doc.setFillColor(61, 43, 20);
   doc.rect(0, 0, pageW, 12, 'F');
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.setTextColor(242, 234, 216); // parchment
+  doc.setTextColor(242, 234, 216);
   doc.text('Dorn Family Recipes', margin, 8);
   doc.text(new Date().toLocaleDateString(), pageW - margin, 8, { align: 'right' });
   y = 22;
 
-  // Category
   doc.setFontSize(8);
-  doc.setTextColor(155, 79, 42); // rust
+  doc.setTextColor(155, 79, 42);
   doc.setFont('helvetica', 'bold');
   doc.text(category.toUpperCase(), margin, y);
   y += 7;
 
-  // Title
   doc.setFontSize(24);
   doc.setTextColor(61, 43, 20);
   doc.setFont('helvetica', 'bold');
@@ -658,7 +684,6 @@ async function downloadRecipePDF() {
   doc.text(titleLines, margin, y);
   y += titleLines.length * 9 + 3;
 
-  // Meta bar
   if (metaItems.length) {
     doc.setDrawColor(232, 220, 200);
     doc.line(margin, y, pageW - margin, y); y += 4;
@@ -670,7 +695,6 @@ async function downloadRecipePDF() {
     doc.line(margin, y, pageW - margin, y); y += 8;
   }
 
-  // Notes
   if (notes) {
     doc.setFontSize(9);
     doc.setTextColor(138, 122, 104);
@@ -682,13 +706,11 @@ async function downloadRecipePDF() {
     y += 4;
   }
 
-  // Two-column layout: ingredients left, instructions right
   const col1W = maxW * 0.36;
   const col2X = margin + col1W + 8;
   const col2W = maxW - col1W - 8;
   const colStartY = y;
 
-  // Ingredients column
   doc.setFontSize(11);
   doc.setTextColor(61, 43, 20);
   doc.setFont('helvetica', 'bolditalic');
@@ -707,7 +729,6 @@ async function downloadRecipePDF() {
     ingY += 0.5;
   });
 
-  // Instructions column
   let insY = colStartY;
   doc.setFontSize(11);
   doc.setTextColor(61, 43, 20);
@@ -718,7 +739,6 @@ async function downloadRecipePDF() {
     if (insY + 8 > doc.internal.pageSize.getHeight() - margin) {
       doc.addPage(); insY = margin;
     }
-    // Step number circle (approximated with a small filled circle)
     doc.setFillColor(155, 79, 42);
     doc.circle(col2X + 3, insY - 1.5, 3, 'F');
     doc.setFontSize(7);
@@ -738,7 +758,6 @@ async function downloadRecipePDF() {
     insY += 3;
   });
 
-  // Footer
   const totalPages = doc.internal.getNumberOfPages();
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
@@ -817,3 +836,4 @@ async function saveRecipe() {
 </script>
 </body>
 </html>
+
