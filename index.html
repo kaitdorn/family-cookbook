@@ -6,14 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dorn Family Recipes</title>
 <style>
-  /* i got this font from google, it looks fancy like a cookbook!! */
+  /* font */
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 
-  /* this resets everything - i copy this from every tutorial lol */
+  /* this resets everything */
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* these are my colors!! i spent like 2 hours picking them */
-  /* they're supposed to look like an old cookbook*/
+  /* colors - they're supposed to look like an old cookbook */
   :root {
     --cream: #faf6f0;        /* background, like old paper */
     --warm-tan: #e8dcc8;     /* borders n stuff */
@@ -31,7 +30,7 @@
   body { font-family: 'Lora', serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
 
   /* PASSWORD SCREEN*/
-  /* the background pattern is an SVG i found online */
+  /* the background pattern is an SVG */
   #password-screen {
     position: fixed; inset: 0; background: var(--cream); display: flex; align-items: center; justify-content: center; z-index: 1000;
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4a882' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
@@ -49,7 +48,7 @@
   .btn-enter { width: 100%; padding: 0.75rem; background: var(--dark-brown); color: var(--parchment); border: none; border-radius: 2px; font-family: 'Lora', serif; font-size: 0.95rem; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; }
   .btn-enter:hover { background: var(--brown); }
 
-  /* this hides the main site until you log in - very secure! */
+  /* this hides the main site until you log in - very! secure! */
   #site { display: none; min-height: 100vh; }
 
   /* ── NAV ── */
@@ -159,6 +158,16 @@
   .ingredients-box h3, .instructions-box h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--dark-brown); margin-bottom: 0.75rem; font-style: italic; }
   .ingredients-box ul { list-style: none; }
   .ingredients-box li { padding: 0.4rem 0; border-bottom: 1px dashed var(--warm-tan); font-size: 0.9rem; color: var(--ink); line-height: 1.4; }
+  /* section headers inside the ingredient list (e.g. "Salad", "Dressing") */
+  /* these are for recipes that have multiple parts! */
+  .ingredients-box li.ing-section-title {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 0.98rem; color: var(--rust);
+    border-bottom: none;             /* no dashed line under a title */
+    padding: 1rem 0 0.25rem;          /* a little breathing room above */
+    letter-spacing: 0.01em;
+  }
+  .ingredients-box li.ing-section-title:first-child { padding-top: 0; } /* no gap if it's the very first line */
   .step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
   .step-num { background: var(--rust); color: var(--parchment); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
   .step p { font-size: 0.92rem; line-height: 1.7; color: var(--ink); }
@@ -166,7 +175,7 @@
   .back-btn:hover { color: var(--rust); }
 
   /* ADD RECIPE FORM STYLES */
-  /* i tried to make this look professional. did it work?? */
+  /* i tried to make this look professional. did it work? */
   .add-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
   .form-group { margin-bottom: 1.5rem; }
   .form-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-bottom: 0.45rem; }
@@ -176,6 +185,7 @@
   .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
   @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
   .form-hint { font-size: 0.78rem; color: var(--faded); margin-top: 0.3rem; font-style: italic; }
+  .form-hint em { color: var(--rust); font-style: italic; }
   .success-msg { background: #f0f5ea; border: 1px solid #a3c17a; color: var(--muted-green); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
   .error-msg { background: #fdf0ee; border: 1px solid #e0a090; color: var(--rust); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
   .saving-btn { opacity: 0.6; pointer-events: none; }
@@ -332,8 +342,8 @@
       </div>
       <div class="form-group">
         <label class="form-label">Ingredients *</label>
-        <textarea class="form-textarea" id="f-ingredients" rows="6" placeholder="2 cups flour&#10;1 tsp salt&#10;3 eggs..."></textarea>
-        <div class="form-hint">One ingredient per line</div>
+        <textarea class="form-textarea" id="f-ingredients" rows="8" placeholder="For the Salad:&#10;1 cup chickpeas&#10;1 cucumber, diced&#10;&#10;For the Dressing:&#10;1 cup Greek yogurt&#10;1/4 cup lemon juice"></textarea>
+        <div class="form-hint">One ingredient per line. Got a recipe with parts? End a line with a colon to start a section — like <em>For the Dressing:</em></div>
       </div>
       <div class="form-group">
         <label class="form-label">Instructions *</label>
@@ -515,6 +525,36 @@ function normalize(r) {
   };
 }
 
+// ── Ingredient sections ──────────────────────────────────
+// recipes with multiple parts (like a salad + dressing) can have
+// little section headers inside the ingredient list.
+// a line counts as a header if it ENDS WITH A COLON  ->  "For the Dressing:"
+// or STARTS WITH #  ->  "# Dressing"   (either works, whatever's easier!)
+function isIngredientHeader(line) {
+  const t = (line || '').trim();
+  return t.startsWith('#') || t.endsWith(':');
+}
+
+// strips the marker (# or the trailing :) so we just show a clean title
+function cleanHeaderTitle(line) {
+  return (line || '').trim().replace(/^#+\s*/, '').replace(/\s*:\s*$/, '');
+}
+
+// builds the ingredient list HTML, turning header lines into styled titles
+function renderIngredients(ingredients) {
+  const list = ingredients || [];
+  // if there are no section headers, just do a plain list like before :)
+  if (!list.some(isIngredientHeader)) {
+    return `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>`;
+  }
+  const rows = list.map(line =>
+    isIngredientHeader(line)
+      ? `<li class="ing-section-title">${cleanHeaderTitle(line)}</li>`
+      : `<li>${line}</li>`
+  ).join('');
+  return `<ul>${rows}</ul>`;
+}
+
 function renderHome() {
   const recent = allRecipes.slice(0, 3).map(normalize);
   const grid = document.getElementById('home-recent');
@@ -670,7 +710,7 @@ function openDetail(id) {
     </div>
     ${r.notes ? `<p style="font-style:italic;color:var(--faded);font-size:0.9rem;margin-bottom:2rem;padding:0.75rem 1rem;border-left:2px solid var(--warm-tan);">${r.notes}</p>` : ''}
     <div class="detail-grid">
-      <div class="ingredients-box"><h3>Ingredients</h3><ul>${r.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+      <div class="ingredients-box"><h3>Ingredients</h3>${renderIngredients(r.ingredients)}</div>
       <div class="instructions-box"><h3>Instructions</h3>${r.steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><p>${s}</p></div>`).join('')}</div>
     </div>`;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -702,7 +742,12 @@ async function downloadRecipePDF() {
   const title = document.querySelector('.detail-title')?.textContent || 'Recipe';
   const metaItems = [...document.querySelectorAll('.detail-meta span')].map(s => s.textContent);
   const notes = document.querySelector('#detail-content p[style]')?.textContent || '';
-  const ingredients = [...document.querySelectorAll('.ingredients-box li')].map(li => li.textContent.trim());
+  // grab each ingredient line AND remember if it's a section header, so the
+  // PDF can style headers differently (no dashed underline, rust + italic)
+  const ingredients = [...document.querySelectorAll('.ingredients-box li')].map(li => ({
+    text: li.textContent.trim(),
+    isSection: li.classList.contains('ing-section-title')
+  }));
   const steps = [...document.querySelectorAll('.step p')].map(p => p.textContent.trim());
 
   const margin = 20;
@@ -776,11 +821,26 @@ async function downloadRecipePDF() {
   let ingY = y;
   ingredients.forEach(ing => {
     if (ingY + 5 > doc.internal.pageSize.getHeight() - margin) { ingY = colStartY; }
-    doc.setDrawColor(232, 220, 200);
-    doc.line(margin, ingY + 1.5, margin + col1W, ingY + 1.5);
-    const wrapped = doc.splitTextToSize(ing, col1W);
-    wrapped.forEach(line => { doc.text(line, margin, ingY); ingY += 4.5; });
-    ingY += 0.5;
+    if (ing.isSection) {
+      // a section header -> rust, italic, no dashed line, a touch of space above
+      ingY += 2;
+      doc.setFont('helvetica', 'bolditalic');
+      doc.setFontSize(9);
+      doc.setTextColor(155, 79, 42);
+      const wrapped = doc.splitTextToSize(ing.text, col1W);
+      wrapped.forEach(line => { doc.text(line, margin, ingY); ingY += 4.8; });
+      // reset back to the normal ingredient style for the lines that follow
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(44, 31, 14);
+      ingY += 0.5;
+    } else {
+      doc.setDrawColor(232, 220, 200);
+      doc.line(margin, ingY + 1.5, margin + col1W, ingY + 1.5);
+      const wrapped = doc.splitTextToSize(ing.text, col1W);
+      wrapped.forEach(line => { doc.text(line, margin, ingY); ingY += 4.5; });
+      ingY += 0.5;
+    }
   });
 
   let insY = colStartY;
@@ -840,7 +900,7 @@ async function saveRecipe() {
   const name = document.getElementById('f-name').value.trim();
   const category = document.getElementById('f-category').value;
   const submitted_by = document.getElementById('f-submitted-by').value.trim();
-  const ingredients = document.getElementById('f-ingredients').value.trim().split('\n').filter(Boolean);
+  const ingredients = document.getElementById('f-ingredients').value.trim().split('\n').map(l => l.trim()).filter(Boolean);
   const steps = document.getElementById('f-instructions').value.trim().split('\n').filter(Boolean);
   const cuisine = document.getElementById('f-cuisine').value.trim();
   const course = document.getElementById('f-course').value;
