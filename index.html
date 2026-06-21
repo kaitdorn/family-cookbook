@@ -1,211 +1,201 @@
 <!DOCTYPE html>
-<!-- please don't judge the code i'm still learning lol -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dorn Family Recipes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Shrikhand&family=Oswald:wght@600&family=Special+Elite&family=Permanent+Marker&family=DM+Serif+Display&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* i got this font from google, it looks fancy like a cookbook!! */
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+  :root{
+    /* new retro print palette */
+    --paper:#F4EAD0; --paper-2:#EFE3C6; --paper-3:#E7D9B6;
+    --ink:#2B2117; --ink-soft:#6f5f48;
+    --orange:#C8642B; --olive:#6F7A3A; --teal:#2C7E76; --brick:#C03A2B;
+    --mustard:#E2A52C; --navy:#283A56; --pink:#D98D93;
+    --line:#D8C9A6;
+    --font-display:'Shrikhand',Georgia,serif;
+    --font-body:'Fraunces',Georgia,serif;
+    --font-mono:'Space Mono','Courier New',monospace;
+    /* legacy aliases so any older inline styles still render on-brand */
+    --cream:var(--paper); --parchment:var(--paper-2); --warm-tan:var(--line);
+    --brown:var(--ink-soft); --dark-brown:var(--navy); --rust:var(--brick);
+    --light-rust:var(--orange); --muted-green:var(--olive); --faded:var(--ink-soft);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.65;min-height:100vh;-webkit-font-smoothing:antialiased}
+  /* faint paper grain over the whole page */
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.3;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>")}
 
-  /* this resets everything - i copy this from every tutorial lol */
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ── buttons ── */
+  .btn-primary{font-family:var(--font-mono);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--brick);color:var(--paper);border:none;padding:.85rem 1.8rem;border-radius:3px;cursor:pointer;box-shadow:2px 3px 0 rgba(43,33,23,.25);transition:transform .12s,box-shadow .12s,background .15s}
+  .btn-primary:hover{background:var(--orange);transform:translate(-1px,-1px);box-shadow:3px 4px 0 rgba(43,33,23,.25)}
+  .btn-primary:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(43,33,23,.25)}
+  .btn-secondary{font-family:var(--font-mono);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);border:2px solid var(--ink);padding:calc(.85rem - 2px) 1.8rem;border-radius:3px;cursor:pointer;transition:background .15s,color .15s}
+  .btn-secondary:hover{background:var(--ink);color:var(--paper)}
 
-  /* these are my colors!! i spent like 2 hours picking them */
-  /* they're supposed to look like an old cookbook*/
-  :root {
-    --cream: #faf6f0;        /* background, like old paper */
-    --warm-tan: #e8dcc8;     /* borders n stuff */
-    --brown: #6b4c2a;        /* medium brown */
-    --dark-brown: #3d2b14;   /* very brown */
-    --rust: #9b4f2a;         /* RUST */
-    --light-rust: #c4714a;   /* lighter rust for hover effects */
-    --muted-green: #5a6b4a;  /* only used once i think but i'm keeping it */
-    --parchment: #f2ead8;    /* cards and boxes */
-    --ink: #2c1f0e;          /* text color, dark brown not black */
-    --faded: #8a7a68;        /* for less important text */
+  /* ── password screen ── */
+  #password-screen{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1.25rem}
+  .pw-box{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:2.75rem 2.25rem;text-align:center;max-width:380px;width:100%;box-shadow:4px 6px 0 rgba(43,33,23,.14)}
+  .pw-box .logo-text{font-family:var(--font-display);font-size:2rem;color:var(--brick);margin-bottom:.5rem;line-height:1.05}
+  .pw-box .subtitle{font-family:var(--font-mono);font-size:.68rem;color:var(--ink-soft);letter-spacing:.16em;text-transform:uppercase;margin-bottom:1.75rem}
+  .pw-divider{border:none;border-top:1.5px dashed var(--line);margin:1.25rem 0}
+  .pw-label{font-family:var(--font-mono);font-size:.66rem;color:var(--ink-soft);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.5rem;display:block;text-align:left}
+  #pw-input{width:100%;padding:.7rem 1rem;border:2px solid var(--line);border-radius:3px;background:var(--paper);font-family:var(--font-body);font-size:1rem;color:var(--ink);margin-bottom:1rem;outline:none;transition:border-color .2s}
+  #pw-input:focus{border-color:var(--brick)}
+  #pw-error{color:var(--brick);font-family:var(--font-mono);font-size:.72rem;margin-bottom:.75rem;min-height:1em}
+  .btn-enter{width:100%;padding:.8rem;background:var(--brick);color:var(--paper);border:none;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+  .btn-enter:hover{background:var(--orange)}
+
+  #site{display:none;min-height:100vh}
+
+  /* ── nav ── */
+  nav{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-height:70px;flex-wrap:wrap;border-bottom:4px solid var(--brick)}
+  .nav-logo{display:flex;align-items:center;padding:.45rem 0;flex-shrink:1;min-width:0;cursor:pointer}
+  .nav-links{display:flex;gap:.3rem;flex-shrink:0;flex-wrap:wrap}
+  .nav-btn{background:none;border:none;color:rgba(244,234,208,.72);font-family:var(--font-mono);font-size:clamp(.66rem,2.3vw,.74rem);font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .7rem;cursor:pointer;border-radius:3px;transition:color .18s,background .18s;white-space:nowrap}
+  .nav-btn:hover{color:var(--paper);background:rgba(255,255,255,.08)}
+  .nav-btn.active{color:var(--navy);background:var(--mustard)}
+  @media (max-width:400px){nav{padding:.5rem 1rem}.nav-btn{padding:.4rem .5rem}}
+
+  .page{display:none}.page.active{display:block}
+
+  /* ── home hero ── */
+  .home-hero{padding:3.5rem 1.5rem 3rem;text-align:center;border-bottom:2px solid var(--line);display:flex;flex-direction:column;align-items:center}
+  .ransom-nav{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem .45rem}
+  .ransom-nav .rn-word{display:flex;flex-wrap:wrap;align-items:center}
+  .scrap{display:inline-block;line-height:.9;position:relative;border-radius:2px}
+  .ransom-nav .scrap{font-size:clamp(.82rem,3.2vw,1.1rem);padding:.2em .18em .05em;margin:0 .01em;border:0.5px solid rgba(244,234,208,.16);box-shadow:1px 1px 0 rgba(0,0,0,.4)}
+  .hero-eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--brick);margin-bottom:1.25rem}
+  .quote-wrap{max-width:640px;margin:0 auto 1.1rem;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .quote-text{font-family:var(--font-body);font-weight:500;font-style:italic;font-size:clamp(1.3rem,3.4vw,1.9rem);color:var(--ink);line-height:1.4;margin-bottom:.75rem;transition:opacity .6s}
+  .quote-text.fade,.quote-attr.fade{opacity:0}
+  .quote-attr{font-family:var(--font-mono);font-size:.7rem;color:var(--brick);letter-spacing:.12em;text-transform:uppercase;transition:opacity .6s}
+  .quote-dots{display:flex;gap:7px;justify-content:center;margin-bottom:1.75rem}
+  .qdot{width:9px;height:9px;border-radius:50%;background:var(--line);cursor:pointer;border:none;padding:0;transition:background .3s,transform .2s}
+  .qdot.active{background:var(--brick);transform:scale(1.15)}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+  /* ── home stats ── */
+  .home-grid{max-width:640px;margin:3rem auto;padding:0 1.5rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+  @media (max-width:520px){.home-grid{gap:.75rem}}
+  .stat-card{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:1.4rem .75rem;text-align:center;box-shadow:2px 3px 0 rgba(43,33,23,.12)}
+  .stat-card:nth-child(1){transform:rotate(-1.5deg)}
+  .stat-card:nth-child(2){transform:rotate(1deg)}
+  .stat-card:nth-child(3){transform:rotate(-.5deg)}
+  .stat-card .stat-num{font-family:var(--font-display);font-size:2.4rem;display:block;line-height:1}
+  .stat-card:nth-child(1) .stat-num{color:var(--orange)}
+  .stat-card:nth-child(2) .stat-num{color:var(--teal)}
+  .stat-card:nth-child(3) .stat-num{color:var(--brick)}
+  .stat-card .stat-label{font-family:var(--font-mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-top:.4rem}
+
+  .recent-section{max-width:980px;margin:0 auto 3.5rem;padding:0 1.5rem}
+  .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.1}
+  .section-rule{border:none;border-top:2px solid var(--ink);margin:.6rem 0 1.5rem}
+
+  /* ── recipe cards ── */
+  #home-recent,.recipe-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.7rem 1.25rem;padding-top:.6rem}
+  .recipe-card{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:1.3rem 1.2rem 1.2rem;cursor:pointer;position:relative;box-shadow:3px 4px 0 rgba(43,33,23,.13);transition:transform .15s,box-shadow .15s}
+  .recipe-card:nth-child(3n+1){transform:rotate(-1.1deg)}
+  .recipe-card:nth-child(3n+2){transform:rotate(.8deg)}
+  .recipe-card:nth-child(3n){transform:rotate(-.4deg)}
+  .recipe-card:hover{transform:translateY(-3px) rotate(0deg);box-shadow:4px 7px 0 rgba(43,33,23,.16)}
+  /* little binder clip pinning each card */
+  .recipe-card::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:30px;height:15px;background:var(--clip,#41464d);border-radius:2px 2px 4px 4px;box-shadow:0 2px 2px rgba(0,0,0,.2);z-index:2}
+  .recipe-card::after{content:'';position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:20px;height:9px;border:2px solid var(--clip,#41464d);border-bottom:none;border-radius:5px 5px 0 0;z-index:1}
+  .recipe-card:nth-child(5n+1){--clip:#6F7A3A}
+  .recipe-card:nth-child(5n+2){--clip:#C03A2B}
+  .recipe-card:nth-child(5n+3){--clip:#283A56}
+  .recipe-card:nth-child(5n+4){--clip:#E2A52C}
+  .recipe-card:nth-child(5n+5){--clip:#2C7E76}
+  .recipe-card .card-category{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--brick);margin-bottom:.45rem;font-weight:700}
+  .recipe-card .card-title{font-family:var(--font-display);font-size:1.25rem;color:var(--ink);margin-bottom:.55rem;line-height:1.12}
+  .recipe-card .card-meta{font-family:var(--font-mono);font-size:.64rem;color:var(--ink-soft);display:flex;gap:.85rem;flex-wrap:wrap;letter-spacing:.02em}
+
+  .loading{text-align:center;padding:3rem;color:var(--ink-soft);font-style:italic;font-family:var(--font-body);grid-column:1/-1}
+
+  /* ── recipes page ── */
+  .recipes-page{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem}
+  .page-header{margin-bottom:1.75rem}
+  .search-bar-wrap{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+  .search-input{flex:1;min-width:180px;padding:.7rem 1rem;border:2px solid var(--line);border-radius:3px;background:var(--paper-2);font-family:var(--font-body);font-size:1rem;color:var(--ink);outline:none;transition:border-color .2s}
+  .search-input:focus{border-color:var(--brick)}
+  .search-input::placeholder{color:var(--ink-soft);opacity:.75}
+  .cat-filters{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1.4rem}
+  /* category buttons styled as little price-tag stickers */
+  .cat-btn{font-family:var(--font-mono);font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:3px;padding:.4rem .85rem .4rem 1.4rem;cursor:pointer;position:relative;box-shadow:1px 2px 0 rgba(43,33,23,.18);transition:transform .12s,box-shadow .12s;outline:2px solid transparent;outline-offset:1px}
+  .cat-btn::before{content:'';position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+  .cat-btn:hover{transform:translateY(-1px);box-shadow:2px 3px 0 rgba(43,33,23,.2)}
+  .cat-btn.active{outline-color:var(--ink);transform:translateY(-1px) scale(1.04)}
+  .cat-btn:nth-child(6n+1){background:var(--mustard);color:#3a2a06}
+  .cat-btn:nth-child(6n+2){background:var(--teal);color:#eafff8}
+  .cat-btn:nth-child(6n+3){background:var(--pink);color:#3a1c20}
+  .cat-btn:nth-child(6n+4){background:var(--orange);color:#2b1a0e}
+  .cat-btn:nth-child(6n+5){background:var(--navy);color:#e7eefb}
+  .cat-btn:nth-child(6n){background:var(--olive);color:#f1f4e2}
+  .recipes-count{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-soft);margin-bottom:1.25rem;letter-spacing:.08em;text-transform:uppercase}
+  .no-results{text-align:center;padding:3rem;color:var(--ink-soft);font-style:italic;font-size:1.05rem;font-family:var(--font-body)}
+
+  /* ── detail ── */
+  .recipe-detail{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem}
+  .detail-category{display:inline-block;font-family:var(--font-mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:#eafff8;background:var(--teal);padding:.28rem .6rem;border-radius:3px;margin-bottom:.85rem;font-weight:700}
+  .detail-title{font-family:var(--font-display);font-size:clamp(2rem,5.5vw,3.2rem);color:var(--ink);margin-bottom:.75rem;line-height:1.05}
+  .detail-meta{display:flex;gap:1.25rem;font-family:var(--font-mono);font-size:.68rem;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase;border-top:2px solid var(--line);border-bottom:2px solid var(--line);padding:.7rem 0;margin:1rem 0 2rem;flex-wrap:wrap}
+  .detail-grid{display:grid;grid-template-columns:1fr 2fr;gap:2.5rem}
+  @media (max-width:580px){.detail-grid{grid-template-columns:1fr}}
+  .ingredients-box h3,.instructions-box h3{font-family:var(--font-display);font-size:1.2rem;color:var(--brick);margin-bottom:.85rem;line-height:1.1}
+  .ingredients-box ul{list-style:none}
+  .ingredients-box li{padding:.45rem 0;border-bottom:1px dashed var(--line);font-family:var(--font-body);font-size:.98rem;color:var(--ink);line-height:1.45}
+  .ingredients-box li.ing-section-title{font-family:var(--font-display);font-size:1rem;color:var(--olive);border-bottom:none;padding:1rem 0 .3rem;letter-spacing:0}
+  .ingredients-box li.ing-section-title:first-child{padding-top:0}
+  .step{display:flex;gap:1rem;margin-bottom:1.25rem;align-items:flex-start}
+  .step-num{background:var(--brick);color:var(--paper);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.74rem;font-weight:700;flex-shrink:0;margin-top:2px;box-shadow:1px 1px 0 rgba(43,33,23,.2)}
+  .step p{font-family:var(--font-body);font-size:1rem;line-height:1.65;color:var(--ink)}
+  .back-btn{background:none;border:none;color:var(--ink);font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;padding:0;margin-bottom:1.5rem;display:flex;align-items:center;gap:.4rem;transition:color .15s}
+  .back-btn:hover{color:var(--brick)}
+
+  .recipe-actions{display:flex;gap:.75rem;margin-bottom:1.75rem;flex-wrap:wrap}
+  .btn-action{display:flex;align-items:center;gap:.45rem;background:transparent;border:2px solid var(--ink);border-radius:3px;color:var(--ink);font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.45rem 1rem;cursor:pointer;transition:background .18s,color .18s}
+  .btn-action:hover{background:var(--ink);color:var(--paper)}
+  .btn-action svg{width:14px;height:14px;flex-shrink:0}
+
+  /* ── add form ── */
+  .add-page{max-width:720px;margin:0 auto;padding:2.5rem 1.5rem}
+  .form-group{margin-bottom:1.5rem}
+  .form-label{display:block;font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:.45rem;font-weight:700}
+  .form-input,.form-select,.form-textarea{width:100%;padding:.7rem 1rem;border:2px solid var(--line);border-radius:3px;background:var(--paper-2);font-family:var(--font-body);font-size:1rem;color:var(--ink);outline:none;transition:border-color .2s}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--brick)}
+  .form-textarea{resize:vertical;min-height:100px;line-height:1.6}
+  .form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+  @media (max-width:520px){.form-row{grid-template-columns:1fr}}
+  .form-hint{font-family:var(--font-body);font-size:.85rem;color:var(--ink-soft);margin-top:.3rem;font-style:italic}
+  .form-hint em{color:var(--brick);font-style:italic}
+  .success-msg{background:#eef3e2;border:1.5px solid var(--olive);color:#3f4a1e;padding:1rem 1.25rem;border-radius:3px;font-family:var(--font-body);font-size:.95rem;margin-bottom:1.5rem;display:none}
+  .error-msg{background:#fbe9e6;border:1.5px solid var(--brick);color:#7a241b;padding:1rem 1.25rem;border-radius:3px;font-family:var(--font-body);font-size:.95rem;margin-bottom:1.5rem;display:none}
+  .saving-btn{opacity:.6;pointer-events:none}
+
+  /* ── a11y ── */
+  .nav-btn:focus-visible,.btn-primary:focus-visible,.btn-secondary:focus-visible,.btn-enter:focus-visible,.cat-btn:focus-visible,.recipe-card:focus-visible,.btn-action:focus-visible,.back-btn:focus-visible,.qdot:focus-visible,.search-input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+    .recipe-card,.stat-card{transform:none !important}
   }
 
-  /* the whole page body */
-  body { font-family: 'Lora', serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+  /* long single words (like "Kardemummabullar") wrap instead of spilling out of the box */
+  .card-title,.detail-title,.section-title,.ingredients-box li,.step p,.card-meta,.detail-meta{overflow-wrap:anywhere;word-break:break-word}
 
-  /* PASSWORD SCREEN*/
-  /* the background pattern is an SVG i found online */
-  #password-screen {
-    position: fixed; inset: 0; background: var(--cream); display: flex; align-items: center; justify-content: center; z-index: 1000;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4a882' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  /* the little login box */
-  .pw-box { background: var(--parchment); border: 2px solid var(--warm-tan); border-radius: 4px; padding: 3rem 2.5rem; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 4px 32px rgba(60,40,10,0.10); }
-  .pw-box .logo-text { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--dark-brown); margin-bottom: 0.25rem; font-style: italic; }
-  .pw-box .subtitle { font-size: 0.85rem; color: var(--faded); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2rem; }
-  .pw-divider { border: none; border-top: 1px solid var(--warm-tan); margin: 1.25rem 0; }
-  .pw-label { font-size: 0.8rem; color: var(--faded); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; text-align: left; }
-  #pw-input { width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--cream); font-family: 'Lora', serif; font-size: 1rem; color: var(--ink); margin-bottom: 1rem; outline: none; transition: border-color 0.2s; }
-  #pw-input:focus { border-color: var(--brown); }
-  #pw-error { color: var(--rust); font-size: 0.8rem; margin-bottom: 0.75rem; min-height: 1em; }
-  .btn-enter { width: 100%; padding: 0.75rem; background: var(--dark-brown); color: var(--parchment); border: none; border-radius: 2px; font-family: 'Lora', serif; font-size: 0.95rem; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; }
-  .btn-enter:hover { background: var(--brown); }
-
-  /* this hides the main site until you log in - very secure! */
-  #site { display: none; min-height: 100vh; }
-
-  /* ── NAV ── */
-  /* bug fix where the title was going off screen on phones! */
-  nav {
-    background: var(--dark-brown);
-    padding: 0 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    min-height: 64px;
-    flex-wrap: wrap; /* THIS IS THE IMPORTANT ONE */
-    border-bottom: 3px solid var(--rust);
-  }
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: clamp(1rem, 4vw, 1.4rem); /* clamp!! */
-    color: var(--parchment);
-    letter-spacing: 0.02em;
-    flex-shrink: 1;
-    min-width: 0;
-    line-height: 1.3;
-    padding: 0.5rem 0;
-  }
-  .nav-links { display: flex; gap: 0.25rem; flex-shrink: 0; }
-  .nav-btn {
-    background: none; border: none; color: var(--warm-tan);
-    font-family: 'Lora', serif; font-size: clamp(0.72rem, 2.5vw, 0.85rem);
-    letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 0.5rem 0.65rem; cursor: pointer; border-radius: 2px;
-    transition: color 0.2s, background 0.2s; white-space: nowrap;
-  }
-  .nav-btn:hover, .nav-btn.active { color: var(--parchment); background: rgba(255,255,255,0.08); }
-
-  /* extra small phones */
-  @media (max-width: 400px) {
-    nav { padding: 0.5rem 1rem; }
-    .nav-btn { padding: 0.45rem 0.5rem; letter-spacing: 0.04em; }
-  }
-
-  /* pages are hidden by default, .active makes them show up */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* HOME PAGE - the big pretty section at the top with the quote */
-  /* the quote rotates automatically  */
-  .home-hero { background: var(--parchment); padding: 5rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--warm-tan); min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .quote-wrap { max-width: 680px; margin: 0 auto 2.5rem; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .quote-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3.5vw, 2.1rem); color: var(--dark-brown); font-style: italic; line-height: 1.4; margin-bottom: 1rem; opacity: 1; transition: opacity 0.6s ease; }
-  .quote-text.fade { opacity: 0; }
-  .quote-attr { font-size: 0.82rem; color: var(--rust); letter-spacing: 0.14em; text-transform: uppercase; opacity: 1; transition: opacity 0.6s ease; }
-  .quote-attr.fade { opacity: 0; }
-  .quote-dots { display: flex; gap: 7px; justify-content: center; margin-bottom: 2.5rem; }
-  .qdot { width: 7px; height: 7px; border-radius: 50%; background: var(--warm-tan); cursor: pointer; transition: background 0.3s; border: none; padding: 0; }
-  .qdot.active { background: var(--rust); }
-  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-
-  .btn-primary { background: var(--rust); color: var(--parchment); border: none; padding: 0.8rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background 0.2s; }
-  .btn-primary:hover { background: var(--light-rust); }
-  .btn-secondary { background: none; color: var(--brown); border: 1px solid var(--brown); padding: 0.8rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all 0.2s; }
-  .btn-secondary:hover { background: var(--brown); color: var(--parchment); }
-
-  .home-grid { max-width: 700px; margin: 3rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
-  .stat-card { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 1.5rem; text-align: center; }
-  .stat-card .stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--rust); display: block; }
-  .stat-card .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-top: 0.25rem; }
-
-  .recent-section { max-width: 960px; margin: 0 auto 3rem; padding: 0 2rem; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--dark-brown); font-style: italic; margin-bottom: 0.25rem; }
-  .section-rule { border: none; border-top: 1px solid var(--warm-tan); margin: 0.75rem 0 1.5rem; }
-  /* recipe cards - click them to see the full recipe! */
-  .recipe-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
-  /* auto-fill minmax is the coolest css trick i know. i use it every chance i get now */
-  .recipe-card { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 1.25rem; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
-  .recipe-card:hover { box-shadow: 0 4px 16px rgba(60,40,10,0.12); transform: translateY(-2px); } /* little lift on hover :) */
-  .recipe-card .card-category { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.13em; color: var(--rust); margin-bottom: 0.4rem; }
-  .recipe-card .card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--dark-brown); margin-bottom: 0.5rem; line-height: 1.3; }
-  .recipe-card .card-meta { font-size: 0.78rem; color: var(--faded); display: flex; gap: 1rem; flex-wrap: wrap; }
-
-  .loading { text-align: center; padding: 3rem; color: var(--faded); font-style: italic; }
-
-  .recipes-page { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem; }
-  .page-header { margin-bottom: 2rem; }
-  .search-bar-wrap { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
-  .search-input { flex: 1; min-width: 180px; padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--parchment); font-family: 'Lora', serif; font-size: 0.95rem; color: var(--ink); outline: none; }
-  .search-input:focus { border-color: var(--brown); }
-  .cat-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .cat-btn { background: var(--parchment); border: 1px solid var(--warm-tan); border-radius: 2px; padding: 0.35rem 0.9rem; font-family: 'Lora', serif; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brown); cursor: pointer; transition: all 0.15s; }
-  .cat-btn:hover, .cat-btn.active { background: var(--brown); color: var(--parchment); border-color: var(--brown); }
-  .filter-dropdowns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-  @media (max-width: 520px) { .filter-dropdowns { grid-template-columns: 1fr; } }
-  .filter-group { display: flex; flex-direction: column; gap: 0.35rem; }
-  .filter-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faded); }
-  .filter-select { padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--parchment); font-family: 'Lora', serif; font-size: 0.9rem; color: var(--ink); outline: none; cursor: pointer; transition: border-color 0.2s; }
-  .filter-select:focus { border-color: var(--brown); }
-  .recipes-count { font-size: 0.82rem; color: var(--faded); margin-bottom: 1.25rem; letter-spacing: 0.05em; }
-  .no-results { text-align: center; padding: 3rem; color: var(--faded); font-style: italic; font-size: 1.1rem; }
-
-  .recipe-detail { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem; }
-  .detail-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rust); margin-bottom: 0.5rem; }
-  .detail-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); color: var(--dark-brown); font-style: italic; margin-bottom: 0.75rem; line-height: 1.2; }
-  .detail-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--faded); letter-spacing: 0.08em; text-transform: uppercase; border-top: 1px solid var(--warm-tan); border-bottom: 1px solid var(--warm-tan); padding: 0.75rem 0; margin: 1rem 0 2rem; flex-wrap: wrap; }
-  .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2.5rem; }
-  @media (max-width: 580px) { .detail-grid { grid-template-columns: 1fr; } }
-  .ingredients-box h3, .instructions-box h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--dark-brown); margin-bottom: 0.75rem; font-style: italic; }
-  .ingredients-box ul { list-style: none; }
-  .ingredients-box li { padding: 0.4rem 0; border-bottom: 1px dashed var(--warm-tan); font-size: 0.9rem; color: var(--ink); line-height: 1.4; }
-  /* section headers inside the ingredient list (e.g. "Salad", "Dressing") */
-  /* these are for recipes that have multiple parts! */
-  .ingredients-box li.ing-section-title {
-    font-family: 'Playfair Display', serif; font-style: italic;
-    font-size: 0.98rem; color: var(--rust);
-    border-bottom: none;             /* no dashed line under a title */
-    padding: 1rem 0 0.25rem;          /* a little breathing room above */
-    letter-spacing: 0.01em;
-  }
-  .ingredients-box li.ing-section-title:first-child { padding-top: 0; } /* no gap if it's the very first line */
-  .step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
-  .step-num { background: var(--rust); color: var(--parchment); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
-  .step p { font-size: 0.92rem; line-height: 1.7; color: var(--ink); }
-  .back-btn { background: none; border: none; color: var(--brown); font-family: 'Lora', serif; font-size: 0.85rem; cursor: pointer; padding: 0; letter-spacing: 0.05em; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.4rem; }
-  .back-btn:hover { color: var(--rust); }
-
-  /* ADD RECIPE FORM STYLES */
-  /* i tried to make this look professional. did it work?? */
-  .add-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
-  .form-group { margin-bottom: 1.5rem; }
-  .form-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-bottom: 0.45rem; }
-  .form-input, .form-select, .form-textarea { width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--warm-tan); border-radius: 2px; background: var(--parchment); font-family: 'Lora', serif; font-size: 0.95rem; color: var(--ink); outline: none; transition: border-color 0.2s; }
-  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--brown); }
-  .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-  @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
-  .form-hint { font-size: 0.78rem; color: var(--faded); margin-top: 0.3rem; font-style: italic; }
-  .form-hint em { color: var(--rust); font-style: italic; }
-  .success-msg { background: #f0f5ea; border: 1px solid #a3c17a; color: var(--muted-green); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
-  .error-msg { background: #fdf0ee; border: 1px solid #e0a090; color: var(--rust); padding: 1rem 1.25rem; border-radius: 2px; font-size: 0.92rem; margin-bottom: 1.5rem; display: none; }
-  .saving-btn { opacity: 0.6; pointer-events: none; }
-
-  .recipe-actions { display: flex; gap: 0.75rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
-  .btn-action { display: flex; align-items: center; gap: 0.45rem; background: none; border: 1px solid var(--warm-tan); border-radius: 2px; color: var(--brown); font-family: 'Lora', serif; font-size: 0.8rem; letter-spacing: 0.09em; text-transform: uppercase; padding: 0.5rem 1.1rem; cursor: pointer; transition: all 0.18s; }
-  .btn-action:hover { background: var(--brown); color: var(--parchment); border-color: var(--brown); }
-  .btn-action svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-  @media print {
-    #password-screen, nav, .back-btn, .recipe-actions { display: none !important; }
-    body { background: white !important; }
-    #site { display: block !important; }
-    .page { display: none !important; }
-    #page-detail { display: block !important; }
-    .recipe-detail { max-width: 100%; padding: 1rem; }
-    .detail-title { font-size: 2rem; }
-    .detail-grid { grid-template-columns: 1fr 2fr; }
-    .recipe-card, .stat-card { box-shadow: none; }
+  /* ── print ── */
+  @media print{
+    #password-screen,nav,.back-btn,.recipe-actions,body::before{display:none !important}
+    body{background:#fff !important}
+    #site{display:block !important}
+    .page{display:none !important}
+    #page-detail{display:block !important}
+    .recipe-detail{max-width:100%;padding:1rem}
+    .detail-grid{grid-template-columns:1fr 2fr}
+    .recipe-card,.stat-card{box-shadow:none}
   }
 </style>
 </head>
@@ -225,7 +215,9 @@
 
 <div id="site">
   <nav>
-    <div class="nav-logo">Dorn Family Recipes</div>
+    <div class="nav-logo" onclick="showPage('home', document.querySelectorAll('.nav-btn')[0])">
+      <span class="ransom-nav" id="nav-ransom" aria-label="Dorn Family Recipes"></span>
+    </div>
     <div class="nav-links">
       <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
       <button class="nav-btn" onclick="showPage('recipes',this)">Recipes</button>
@@ -236,6 +228,7 @@
   <!-- HOME PAGE -->
   <div id="page-home" class="page active">
     <div class="home-hero">
+      <div class="hero-eyebrow">The Dorn Family Cookbook</div>
       <div class="quote-wrap">
         <div class="quote-text" id="quote-text"></div>
         <div class="quote-attr" id="quote-attr"></div>
@@ -999,6 +992,46 @@ async function saveRecipe() {
     saveBtn.classList.remove('saving-btn');
   }
 }
+
+// ── builds the cut-out "ransom note" wordmark in the top banner ──
+// each letter is its own paper scrap (different font, color, slight tilt).
+// kept fairly uniform so it reads as a clean little logo on the navy bar —
+// and the navy bar color is deliberately NOT used as any letter color.
+function buildRansomHeader(){
+  const wrap = document.getElementById('nav-ransom');
+  if(!wrap || wrap.dataset.built) return;
+  wrap.dataset.built = '1';
+  const fonts = ["'Anton',sans-serif","'Archivo Black',sans-serif","'Shrikhand',serif","'Oswald',sans-serif","'Special Elite',monospace","'Permanent Marker',cursive","'DM Serif Display',serif","Georgia,serif"];
+  // no navy in here — the banner itself is navy, so letters skip that color
+  const scraps = [
+    {bg:'#C8642B',fg:'#2B1A0E'}, {bg:'#2C7E76',fg:'#EDE4CB'}, {bg:'#E2A52C',fg:'#3A2A06'},
+    {bg:'#C03A2B',fg:'#F3E7CC'}, {bg:'#6F7A3A',fg:'#F3E7CC'}, {bg:'#D98D93',fg:'#3A1C20'},
+    {bg:'#F1E6C8',fg:'#2B2117'}, {bg:'#1E1A16',fg:'#EFE3C6'}
+  ];
+  const rots = [-5,3,-4,5,-2,4,-5,2,3,-3,5,-2,4,-4,2];
+  const text = "DORN FAMILY RECIPES";
+  let i = 0;
+  text.split(' ').forEach(word=>{
+    const w = document.createElement('span');
+    w.className = 'rn-word';
+    word.split('').forEach(ch=>{
+      const s = document.createElement('span');
+      s.className = 'scrap';
+      const scrap = scraps[(i*5+2) % scraps.length];
+      s.style.background = scrap.bg;
+      s.style.color = scrap.fg;
+      s.style.fontFamily = fonts[(i*3+1) % fonts.length];
+      s.style.transform = 'rotate('+rots[i % rots.length]+'deg)';
+      s.style.fontSize = (0.92 + ((i*5)%4)*0.04) + 'em';
+      s.style.top = ((((i*3)%5)-2)*1.5) + 'px';   // gentle vertical offset only
+      s.textContent = ch;
+      w.appendChild(s);
+      i++;
+    });
+    wrap.appendChild(w);
+  });
+}
+buildRansomHeader();
 </script>
 </body>
 </html>
