@@ -370,10 +370,10 @@ console.log('%cplease know that i tried my best and i\'m still learning', 'font-
 console.log('%c                                        — Kait', 'font-size: 13px; font-style: italic; color: #9b4f2a;');
 console.log('%c(p.s. yes the password is in the source code. no i\'m not fixing it.)', 'font-size: 11px; color: #8a7a68;');
 
-// hi hackers! enjoy grandma's dill dip ig...
+// hi hackers!! enjoy grandma's dill dip ig
 const CORRECT_PASSWORD = "skker1991";
 
-// sb link
+// supabase is a website that stores my data in a database
 const SUPABASE_URL = "https://lzbxhbhheplwplfpapjh.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6YnhoYmhoZXBsd3BsZnBhcGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDY0NTcsImV4cCI6MjA4OTI4MjQ1N30.SESchX38wRIuwNMyA8m_vj9H7m8W-WXEfd8tNlqdDTA";
 
@@ -772,157 +772,143 @@ async function downloadRecipePDF() {
   const title = document.querySelector('.detail-title')?.textContent || 'Recipe';
   const metaItems = [...document.querySelectorAll('.detail-meta span')].map(s => s.textContent);
   const notes = document.querySelector('#detail-content p[style]')?.textContent || '';
-  // grab each ingredient line AND remember if it's a section header, so the
-  // PDF can style headers differently (no dashed underline, rust + italic)
   const ingredients = [...document.querySelectorAll('.ingredients-box li')].map(li => ({
     text: li.textContent.trim(),
     isSection: li.classList.contains('ing-section-title')
   }));
   const steps = [...document.querySelectorAll('.step p')].map(p => p.textContent.trim());
 
+  // plain black / white / grey, single column, top to bottom — easy to follow
+  const BLACK = [25, 25, 25];
+  const GREY = [115, 115, 115];
+  const LIGHT = [205, 205, 205];
+
   const margin = 20;
   const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
   const maxW = pageW - margin * 2;
   let y = margin;
 
-  const checkPage = (needed = 8) => {
-    if (y + needed > doc.internal.pageSize.getHeight() - margin) {
-      doc.addPage(); y = margin;
-    }
+  // start a new page if the next thing won't fit
+  const need = (h) => { if (y + h > pageH - margin) { doc.addPage(); y = margin; } };
+
+  // ── masthead ──
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...GREY);
+  doc.text('DORN FAMILY RECIPES', margin, y);
+  doc.text(new Date().toLocaleDateString(), pageW - margin, y, { align: 'right' });
+  y += 3;
+  doc.setDrawColor(...BLACK); doc.setLineWidth(0.4);
+  doc.line(margin, y, pageW - margin, y);
+  y += 10;
+
+  // ── category ──
+  if (category) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...GREY);
+    doc.text(category.toUpperCase(), margin, y);
+    y += 7;
+  }
+
+  // ── title ──
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(...BLACK);
+  doc.splitTextToSize(title, maxW).forEach(line => { need(9); doc.text(line, margin, y); y += 9; });
+  y += 2;
+
+  // ── meta (time / serves / by) between two thin rules ──
+  if (metaItems.length) {
+    doc.setDrawColor(...LIGHT); doc.setLineWidth(0.2);
+    doc.line(margin, y, pageW - margin, y); y += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...GREY);
+    doc.text(metaItems.join('     ·     '), margin, y);
+    y += 4;
+    doc.line(margin, y, pageW - margin, y); y += 9;
+  }
+
+  // ── notes ──
+  if (notes) {
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...GREY);
+    doc.splitTextToSize(notes, maxW).forEach(line => { need(6); doc.text(line, margin, y); y += 5; });
+    y += 6;
+  }
+
+  // bold section heading with an underline rule
+  const heading = (label) => {
+    need(15);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...BLACK);
+    doc.text(label, margin, y);
+    y += 3;
+    doc.setDrawColor(...BLACK); doc.setLineWidth(0.4);
+    doc.line(margin, y, pageW - margin, y);
+    y += 7;
   };
 
-  doc.setFillColor(61, 43, 20);
-  doc.rect(0, 0, pageW, 12, 'F');
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(242, 234, 216);
-  doc.text('Dorn Family Recipes', margin, 8);
-  doc.text(new Date().toLocaleDateString(), pageW - margin, 8, { align: 'right' });
-  y = 22;
-
-  doc.setFontSize(8);
-  doc.setTextColor(155, 79, 42);
-  doc.setFont('helvetica', 'bold');
-  doc.text(category.toUpperCase(), margin, y);
-  y += 7;
-
-  doc.setFontSize(24);
-  doc.setTextColor(61, 43, 20);
-  doc.setFont('helvetica', 'bold');
-  const titleLines = doc.splitTextToSize(title, maxW);
-  doc.text(titleLines, margin, y);
-  y += titleLines.length * 9 + 3;
-
-  if (metaItems.length) {
-    doc.setDrawColor(232, 220, 200);
-    doc.line(margin, y, pageW - margin, y); y += 4;
-    doc.setFontSize(8);
-    doc.setTextColor(138, 122, 104);
-    doc.setFont('helvetica', 'normal');
-    doc.text(metaItems.join('   ·   '), margin, y);
-    y += 4;
-    doc.line(margin, y, pageW - margin, y); y += 8;
-  }
-
-  if (notes) {
-    doc.setFontSize(9);
-    doc.setTextColor(138, 122, 104);
-    doc.setFont('helvetica', 'italic');
-    const noteLines = doc.splitTextToSize(notes, maxW - 6);
-    doc.setDrawColor(232, 220, 200);
-    doc.line(margin, y, margin + 2, y);
-    noteLines.forEach(line => { checkPage(); doc.text(line, margin + 5, y); y += 5; });
-    y += 4;
-  }
-
-  const col1W = maxW * 0.36;
-  const col2X = margin + col1W + 8;
-  const col2W = maxW - col1W - 8;
-  const colStartY = y;
-  const colStartPage = doc.internal.getNumberOfPages(); // page where the two columns begin
-  const pageBottom = doc.internal.pageSize.getHeight() - margin;
-
-  doc.setFontSize(11);
-  doc.setTextColor(61, 43, 20);
-  doc.setFont('helvetica', 'bolditalic');
-  doc.text('Ingredients', margin, y);
-  y += 6;
-  doc.setFontSize(8.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(44, 31, 14);
-  let ingY = y;
-  ingredients.forEach(ing => {
-    if (ing.isSection) {
-      // a section header -> rust, italic, no dashed line, a touch of space above
-      if (ingY + 7 > pageBottom) { doc.addPage(); ingY = margin; }
-      ingY += 2;
-      doc.setFont('helvetica', 'bolditalic');
-      doc.setFontSize(9);
-      doc.setTextColor(155, 79, 42);
-      const wrapped = doc.splitTextToSize(ing.text, col1W);
-      wrapped.forEach(line => {
-        if (ingY + 5 > pageBottom) { doc.addPage(); ingY = margin; }
-        doc.text(line, margin, ingY); ingY += 4.8;
-      });
-      // reset back to the normal ingredient style for the lines that follow
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8.5);
-      doc.setTextColor(44, 31, 14);
-      ingY += 0.5;
-    } else {
-      // start a fresh page if this item won't fit, instead of writing over
-      // what's already there (that was the old overlap bug)
-      if (ingY + 5 > pageBottom) { doc.addPage(); ingY = margin; }
-      doc.setDrawColor(232, 220, 200);
-      doc.line(margin, ingY + 1.5, margin + col1W, ingY + 1.5);
-      const wrapped = doc.splitTextToSize(ing.text, col1W);
-      wrapped.forEach(line => {
-        if (ingY + 5 > pageBottom) { doc.addPage(); ingY = margin; }
-        doc.text(line, margin, ingY); ingY += 4.5;
-      });
-      ingY += 0.5;
-    }
-  });
-
-  // hop back to the page/top where the instructions column should begin,
-  // so a long ingredient list doesn't push the instructions onto the wrong page
-  doc.setPage(colStartPage);
-  let insY = colStartY;
-  doc.setFontSize(11);
-  doc.setTextColor(61, 43, 20);
-  doc.setFont('helvetica', 'bolditalic');
-  doc.text('Instructions', col2X, insY);
-  insY += 6;
-  steps.forEach((step, i) => {
-    if (insY + 8 > doc.internal.pageSize.getHeight() - margin) {
-      doc.addPage(); insY = margin;
-    }
-    doc.setFillColor(155, 79, 42);
-    doc.circle(col2X + 3, insY - 1.5, 3, 'F');
-    doc.setFontSize(7);
-    doc.setTextColor(242, 234, 216);
-    doc.setFont('helvetica', 'bold');
-    doc.text(String(i + 1), col2X + 3, insY - 0.5, { align: 'center' });
-
-    doc.setFontSize(8.5);
-    doc.setTextColor(44, 31, 14);
-    doc.setFont('helvetica', 'normal');
-    const stepLines = doc.splitTextToSize(step, col2W - 8);
-    stepLines.forEach(line => {
-      if (insY + 5 > doc.internal.pageSize.getHeight() - margin) { doc.addPage(); insY = margin; }
-      doc.text(line, col2X + 8, insY);
-      insY += 5;
+  // ── ingredients ──
+  if (ingredients.length) {
+    heading('Ingredients');
+    ingredients.forEach(ing => {
+      if (ing.isSection) {
+        y += 2;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10.5);
+        doc.setTextColor(...BLACK);
+        doc.splitTextToSize(ing.text, maxW).forEach(line => { need(6); doc.text(line, margin, y); y += 5.5; });
+        y += 1.5;
+      } else {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.splitTextToSize(ing.text, maxW - 6).forEach((line, idx) => {
+          need(6);
+          if (idx === 0) { doc.setFillColor(...GREY); doc.rect(margin + 0.5, y - 1.7, 1.5, 1.5, 'F'); }
+          doc.setTextColor(...BLACK);
+          doc.text(line, margin + 5, y);
+          y += 5.5;
+        });
+      }
     });
-    insY += 3;
-  });
+    y += 6;
+  }
 
+  // ── instructions ──
+  if (steps.length) {
+    heading('Instructions');
+    steps.forEach((step, i) => {
+      const num = (i + 1) + '.';
+      doc.setFontSize(10);
+      doc.splitTextToSize(step, maxW - 9).forEach((line, idx) => {
+        need(6.5);
+        if (idx === 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(...BLACK);
+          doc.text(num, margin, y);
+        }
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...BLACK);
+        doc.text(line, margin + 9, y);
+        y += 5.8;
+      });
+      y += 2.5;
+    });
+  }
+
+  // ── page numbers ──
   const totalPages = doc.internal.getNumberOfPages();
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
-    doc.setFontSize(7);
-    doc.setTextColor(138, 122, 104);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Page ${p} of ${totalPages}`, pageW - margin, doc.internal.pageSize.getHeight() - 8, { align: 'right' });
+    doc.setFontSize(8);
+    doc.setTextColor(...GREY);
+    doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 10, { align: 'right' });
   }
 
   const safeName = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
