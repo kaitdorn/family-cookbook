@@ -6,13 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dorn Family Recipes</title>
 <style>
-  /* font */
+  /* i got this font from google, it looks fancy like a cookbook!! */
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 
-  /* this resets everything */
+  /* this resets everything - i copy this from every tutorial lol */
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* colors - they're supposed to look like an old cookbook */
+  /* these are my colors!! i spent like 2 hours picking them */
+  /* they're supposed to look like an old cookbook*/
   :root {
     --cream: #faf6f0;        /* background, like old paper */
     --warm-tan: #e8dcc8;     /* borders n stuff */
@@ -30,7 +31,7 @@
   body { font-family: 'Lora', serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
 
   /* PASSWORD SCREEN*/
-  /* the background pattern is an SVG */
+  /* the background pattern is an SVG i found online */
   #password-screen {
     position: fixed; inset: 0; background: var(--cream); display: flex; align-items: center; justify-content: center; z-index: 1000;
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4a882' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
@@ -48,7 +49,7 @@
   .btn-enter { width: 100%; padding: 0.75rem; background: var(--dark-brown); color: var(--parchment); border: none; border-radius: 2px; font-family: 'Lora', serif; font-size: 0.95rem; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; }
   .btn-enter:hover { background: var(--brown); }
 
-  /* this hides the main site until you log in - very! secure! */
+  /* this hides the main site until you log in - very secure! */
   #site { display: none; min-height: 100vh; }
 
   /* ── NAV ── */
@@ -175,7 +176,7 @@
   .back-btn:hover { color: var(--rust); }
 
   /* ADD RECIPE FORM STYLES */
-  /* i tried to make this look professional. did it work? */
+  /* i tried to make this look professional. did it work?? */
   .add-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem; }
   .form-group { margin-bottom: 1.5rem; }
   .form-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--faded); margin-bottom: 0.45rem; }
@@ -262,7 +263,7 @@
     <div class="recipes-page">
       <div class="page-header"><div class="section-title">All Recipes</div><hr class="section-rule"></div>
       <div class="search-bar-wrap">
-        <input type="text" class="search-input" id="search-input" placeholder="Search recipes..." oninput="filterRecipes()">
+        <input type="text" class="search-input" id="search-input" placeholder="Search by name, ingredient, or cook…" oninput="filterRecipes()">
       </div>
       <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Category</div>
       <div class="cat-filters" id="cat-filters"></div>
@@ -485,6 +486,8 @@ function checkPw() {
 
 // loads all the recipes from supabase and draws everything on screen
 async function loadAndRender() {
+  setupFilterListeners();   // safe to call repeatedly; only wires up once
+  showLoadingState();
   try {
     allRecipes = await loadRecipes();
     populateCuisineSuggestions();
@@ -494,7 +497,27 @@ async function loadAndRender() {
   } catch (e) {
     // if this breaks, something is very wrong with supabase or the internet
     console.error(e);
+    showErrorState();
   }
+}
+
+// shows a friendly "loading…" while we wait on supabase
+function showLoadingState() {
+  const msg = '<div class="loading">Loading recipes…</div>';
+  document.getElementById('home-recent').innerHTML = msg;
+  document.getElementById('recipes-grid').innerHTML = msg;
+  document.getElementById('recipes-count').textContent = '';
+  document.getElementById('no-results').style.display = 'none';
+}
+
+// shown if recipes can't load (bad connection, supabase down, etc.)
+// includes a "try again" button so nobody's stuck staring at a blank page
+function showErrorState() {
+  const msg = `<div class="no-results">Couldn't load the recipes right now.
+    <br><button class="cat-btn" style="margin-top:1rem;" onclick="loadAndRender()">Try again</button></div>`;
+  document.getElementById('home-recent').innerHTML = msg;
+  document.getElementById('recipes-grid').innerHTML = msg;
+  document.getElementById('recipes-count').textContent = '';
 }
 
 // this swaps between pages without reloading!! single page app!! very cool!!
@@ -505,6 +528,7 @@ function showPage(name, btn) {
   if (btn) btn.classList.add('active');
   if (name === 'home') renderHome();
   if (name === 'recipes') { renderRecipes(); buildCatFilters(); }
+  window.scrollTo({ top: 0 }); // always start a new page at the top
 }
 
 // this converts the raw database object into something nicer to work with
@@ -523,6 +547,16 @@ function normalize(r) {
     steps: r.steps || [],
     notes: r.notes
   };
+}
+
+// makes any user-typed text safe to drop into the page.
+// without this, a recipe name like "Mac & Cheese" or an ingredient with
+// a < or > could render wrong OR let someone sneak code onto the page.
+// we run everything people type through this before showing it.
+function escapeHTML(str) {
+  return String(str ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
 }
 
 // ── Ingredient sections ──────────────────────────────────
@@ -545,12 +579,12 @@ function renderIngredients(ingredients) {
   const list = ingredients || [];
   // if there are no section headers, just do a plain list like before :)
   if (!list.some(isIngredientHeader)) {
-    return `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    return `<ul>${list.map(i => `<li>${escapeHTML(i)}</li>`).join('')}</ul>`;
   }
   const rows = list.map(line =>
     isIngredientHeader(line)
-      ? `<li class="ing-section-title">${cleanHeaderTitle(line)}</li>`
-      : `<li>${line}</li>`
+      ? `<li class="ing-section-title">${escapeHTML(cleanHeaderTitle(line))}</li>`
+      : `<li>${escapeHTML(line)}</li>`
   ).join('');
   return `<ul>${rows}</ul>`;
 }
@@ -567,14 +601,14 @@ function renderHome() {
 }
 
 function recipeCardHTML(r) {
-  const tags = [r.category, r.cuisine, r.course].filter(Boolean).join(' · ');
+  const tags = escapeHTML([r.category, r.cuisine, r.course].filter(Boolean).join(' · '));
   return `<div class="recipe-card" onclick="openDetail(${r.id})">
     <div class="card-category">${tags}</div>
-    <div class="card-title">${r.name}</div>
+    <div class="card-title">${escapeHTML(r.name)}</div>
     <div class="card-meta">
-      <span>Time: ${r.time||'—'}</span>
-      <span>Serves: ${r.servings||'—'}</span>
-      ${r.submittedBy ? `<span>By: ${r.submittedBy}</span>` : ''}
+      <span>Time: ${escapeHTML(r.time||'—')}</span>
+      <span>Serves: ${escapeHTML(r.servings||'—')}</span>
+      ${r.submittedBy ? `<span>By: ${escapeHTML(r.submittedBy)}</span>` : ''}
     </div>
   </div>`;
 }
@@ -608,84 +642,86 @@ function buildCatFilters() {
     (activeCuisine === 'All' || r.cuisine === activeCuisine)
   ).map(r => r.course).filter(Boolean))]);
 
-  document.getElementById('cat-filters').innerHTML =
-    ['All', ...catsVisible].map(c =>
-      `<button class="cat-btn ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</button>`
-    ).join('');
-
-  document.getElementById('cuisine-filters').innerHTML =
-    ['All', ...cuisinesVisible].map(c =>
-      `<button class="cat-btn ${c===activeCuisine?'active':''}" onclick="setCuisine('${c}')">${c}</button>`
-    ).join('');
-
-  document.getElementById('course-filters').innerHTML =
-    ['All', ...coursesVisible].map(c =>
-      `<button class="cat-btn ${c===activeCourse?'active':''}" onclick="setCourse('${c}')">${c}</button>`
-    ).join('');
+  // draw the three rows of filter buttons. we use data- attributes + one shared
+  // click listener (set up once below) instead of inline onclick, which keeps
+  // user-typed cuisine names from ever breaking out into the page.
+  renderFilterRow('cat-filters', ['All', ...catsVisible], activeCategory, 'category');
+  renderFilterRow('cuisine-filters', ['All', ...cuisinesVisible], activeCuisine, 'cuisine');
+  renderFilterRow('course-filters', ['All', ...coursesVisible], activeCourse, 'course');
 }
 
-function setCategory(cat) {
-  activeCategory = cat;
+function renderFilterRow(elId, values, activeVal, kind) {
+  document.getElementById(elId).innerHTML = values.map(v =>
+    `<button class="cat-btn ${v===activeVal?'active':''}" data-kind="${kind}" data-value="${escapeHTML(v)}">${escapeHTML(v)}</button>`
+  ).join('');
+}
+
+// wire up all three filter rows with a single click listener (runs once).
+// clicking any button reads its data-value and applies the right filter.
+let filterListenersReady = false;
+function setupFilterListeners() {
+  if (filterListenersReady) return;
+  filterListenersReady = true;
+  ['cat-filters', 'cuisine-filters', 'course-filters'].forEach(id => {
+    document.getElementById(id).addEventListener('click', e => {
+      const btn = e.target.closest('.cat-btn');
+      if (!btn) return;
+      setFilter(btn.dataset.kind, btn.dataset.value);
+    });
+  });
+}
+
+// ── Filters ──────────────────────────────────────────────
+// all three filters (category / cuisine / course) work the same way, so they
+// share ONE function instead of three near-identical copies.
+// when you pick a filter, we keep it and clear any OTHER active filter that
+// would leave zero matching recipes — so you never land on an empty page.
+function getActiveFilter(dim) {
+  return dim === 'category' ? activeCategory
+       : dim === 'cuisine'  ? activeCuisine
+       : activeCourse;
+}
+function setActiveFilter(dim, value) {
+  if (dim === 'category') activeCategory = value;
+  else if (dim === 'cuisine') activeCuisine = value;
+  else activeCourse = value;
+}
+function selectionMatches(r) {
+  return (activeCategory === 'All' || r.category === activeCategory) &&
+         (activeCuisine  === 'All' || r.cuisine  === activeCuisine ) &&
+         (activeCourse   === 'All' || r.course   === activeCourse  );
+}
+function setFilter(dim, value) {
+  setActiveFilter(dim, value);
   const norm = allRecipes.map(normalize);
-  const cuisinesStillValid = new Set(norm.filter(r =>
-    (cat === 'All' || r.category === cat) &&
-    (activeCourse === 'All' || r.course === activeCourse)
-  ).map(r => r.cuisine).filter(Boolean));
-  if (activeCuisine !== 'All' && !cuisinesStillValid.has(activeCuisine)) activeCuisine = 'All';
-
-  const coursesStillValid = new Set(norm.filter(r =>
-    (cat === 'All' || r.category === cat) &&
-    (activeCuisine === 'All' || r.cuisine === activeCuisine)
-  ).map(r => r.course).filter(Boolean));
-  if (activeCourse !== 'All' && !coursesStillValid.has(activeCourse)) activeCourse = 'All';
-
-  buildCatFilters(); filterRecipes();
+  // re-check the other two filters; drop any that now have no matches
+  ['category', 'cuisine', 'course'].filter(d => d !== dim).forEach(d => {
+    if (getActiveFilter(d) !== 'All' && !norm.some(selectionMatches)) {
+      setActiveFilter(d, 'All');
+    }
+  });
+  buildCatFilters();
+  filterRecipes();
 }
-
-function setCuisine(c) {
-  activeCuisine = c;
-  const norm = allRecipes.map(normalize);
-  const catsStillValid = new Set(norm.filter(r =>
-    (c === 'All' || r.cuisine === c) &&
-    (activeCourse === 'All' || r.course === activeCourse)
-  ).map(r => r.category).filter(Boolean));
-  if (activeCategory !== 'All' && !catsStillValid.has(activeCategory)) activeCategory = 'All';
-
-  const coursesStillValid = new Set(norm.filter(r =>
-    (activeCategory === 'All' || r.category === activeCategory) &&
-    (c === 'All' || r.cuisine === c)
-  ).map(r => r.course).filter(Boolean));
-  if (activeCourse !== 'All' && !coursesStillValid.has(activeCourse)) activeCourse = 'All';
-
-  buildCatFilters(); filterRecipes();
-}
-
-function setCourse(c) {
-  activeCourse = c;
-  const norm = allRecipes.map(normalize);
-  const catsStillValid = new Set(norm.filter(r =>
-    (activeCategory === 'All' || r.category === activeCategory) &&
-    (activeCuisine === 'All' || r.cuisine === activeCuisine)
-  ).map(r => r.category).filter(Boolean));
-  if (activeCategory !== 'All' && !catsStillValid.has(activeCategory)) activeCategory = 'All';
-
-  const cuisinesStillValid = new Set(norm.filter(r =>
-    (activeCategory === 'All' || r.category === activeCategory) &&
-    (c === 'All' || r.course === c)
-  ).map(r => r.cuisine).filter(Boolean));
-  if (activeCuisine !== 'All' && !cuisinesStillValid.has(activeCuisine)) activeCuisine = 'All';
-
-  buildCatFilters(); filterRecipes();
-}
+// kept as small named helpers in case anything else calls them
+function setCategory(v) { setFilter('category', v); }
+function setCuisine(v)  { setFilter('cuisine', v); }
+function setCourse(v)   { setFilter('course', v); }
 
 function filterRecipes() {
-  const query = document.getElementById('search-input').value.toLowerCase();
-  const filtered = allRecipes.map(normalize).filter(r =>
-    r.name.toLowerCase().includes(query) &&
-    (activeCategory === 'All' || r.category === activeCategory) &&
-    (activeCuisine === 'All' || r.cuisine === activeCuisine) &&
-    (activeCourse === 'All' || r.course === activeCourse)
-  );
+  const query = document.getElementById('search-input').value.toLowerCase().trim();
+  const filtered = allRecipes.map(normalize).filter(r => {
+    // search now looks across name, ingredients, who submitted it,
+    // and the category/cuisine/course tags — not just the name
+    const haystack = [
+      r.name, r.category, r.cuisine, r.course, r.submittedBy,
+      ...(r.ingredients || [])
+    ].join(' ').toLowerCase();
+    return haystack.includes(query) &&
+      (activeCategory === 'All' || r.category === activeCategory) &&
+      (activeCuisine === 'All' || r.cuisine === activeCuisine) &&
+      (activeCourse === 'All' || r.course === activeCourse);
+  });
   const grid = document.getElementById('recipes-grid');
   const noRes = document.getElementById('no-results');
   document.getElementById('recipes-count').textContent = `${filtered.length} recipe${filtered.length!==1?'s':''}`;
@@ -699,23 +735,24 @@ function openDetail(id) {
   const raw = allRecipes.find(x => x.id === id);
   if (!raw) return;
   const r = normalize(raw);
-  const tags = [r.category, r.cuisine, r.course].filter(Boolean).join(' · ');
+  const tags = escapeHTML([r.category, r.cuisine, r.course].filter(Boolean).join(' · '));
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-category">${tags}</div>
-    <div class="detail-title">${r.name}</div>
+    <div class="detail-title">${escapeHTML(r.name)}</div>
     <div class="detail-meta">
-      ${r.time ? `<span>Time: ${r.time}</span>` : ''}
-      ${r.servings ? `<span>Serves: ${r.servings}</span>` : ''}
-      ${r.submittedBy ? `<span>By: ${r.submittedBy}</span>` : ''}
+      ${r.time ? `<span>Time: ${escapeHTML(r.time)}</span>` : ''}
+      ${r.servings ? `<span>Serves: ${escapeHTML(r.servings)}</span>` : ''}
+      ${r.submittedBy ? `<span>By: ${escapeHTML(r.submittedBy)}</span>` : ''}
     </div>
-    ${r.notes ? `<p style="font-style:italic;color:var(--faded);font-size:0.9rem;margin-bottom:2rem;padding:0.75rem 1rem;border-left:2px solid var(--warm-tan);">${r.notes}</p>` : ''}
+    ${r.notes ? `<p style="font-style:italic;color:var(--faded);font-size:0.9rem;margin-bottom:2rem;padding:0.75rem 1rem;border-left:2px solid var(--warm-tan);">${escapeHTML(r.notes)}</p>` : ''}
     <div class="detail-grid">
       <div class="ingredients-box"><h3>Ingredients</h3>${renderIngredients(r.ingredients)}</div>
-      <div class="instructions-box"><h3>Instructions</h3>${r.steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><p>${s}</p></div>`).join('')}</div>
+      <div class="instructions-box"><h3>Instructions</h3>${r.steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><p>${escapeHTML(s)}</p></div>`).join('')}</div>
     </div>`;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.textContent === 'Recipes'));
+  window.scrollTo({ top: 0 }); // jump to the top so you start reading at the title
 }
 
 function goBackToRecipes() { showPage('recipes', document.querySelectorAll('.nav-btn')[1]); }
@@ -809,6 +846,8 @@ async function downloadRecipePDF() {
   const col2X = margin + col1W + 8;
   const col2W = maxW - col1W - 8;
   const colStartY = y;
+  const colStartPage = doc.internal.getNumberOfPages(); // page where the two columns begin
+  const pageBottom = doc.internal.pageSize.getHeight() - margin;
 
   doc.setFontSize(11);
   doc.setTextColor(61, 43, 20);
@@ -820,29 +859,41 @@ async function downloadRecipePDF() {
   doc.setTextColor(44, 31, 14);
   let ingY = y;
   ingredients.forEach(ing => {
-    if (ingY + 5 > doc.internal.pageSize.getHeight() - margin) { ingY = colStartY; }
     if (ing.isSection) {
       // a section header -> rust, italic, no dashed line, a touch of space above
+      if (ingY + 7 > pageBottom) { doc.addPage(); ingY = margin; }
       ingY += 2;
       doc.setFont('helvetica', 'bolditalic');
       doc.setFontSize(9);
       doc.setTextColor(155, 79, 42);
       const wrapped = doc.splitTextToSize(ing.text, col1W);
-      wrapped.forEach(line => { doc.text(line, margin, ingY); ingY += 4.8; });
+      wrapped.forEach(line => {
+        if (ingY + 5 > pageBottom) { doc.addPage(); ingY = margin; }
+        doc.text(line, margin, ingY); ingY += 4.8;
+      });
       // reset back to the normal ingredient style for the lines that follow
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor(44, 31, 14);
       ingY += 0.5;
     } else {
+      // start a fresh page if this item won't fit, instead of writing over
+      // what's already there (that was the old overlap bug)
+      if (ingY + 5 > pageBottom) { doc.addPage(); ingY = margin; }
       doc.setDrawColor(232, 220, 200);
       doc.line(margin, ingY + 1.5, margin + col1W, ingY + 1.5);
       const wrapped = doc.splitTextToSize(ing.text, col1W);
-      wrapped.forEach(line => { doc.text(line, margin, ingY); ingY += 4.5; });
+      wrapped.forEach(line => {
+        if (ingY + 5 > pageBottom) { doc.addPage(); ingY = margin; }
+        doc.text(line, margin, ingY); ingY += 4.5;
+      });
       ingY += 0.5;
     }
   });
 
+  // hop back to the page/top where the instructions column should begin,
+  // so a long ingredient list doesn't push the instructions onto the wrong page
+  doc.setPage(colStartPage);
   let insY = colStartY;
   doc.setFontSize(11);
   doc.setTextColor(61, 43, 20);
@@ -892,7 +943,7 @@ async function downloadRecipePDF() {
 function populateCuisineSuggestions() {
   const cuisines = [...new Set(allRecipes.map(r => r.cuisine).filter(Boolean))].sort();
   const dl = document.getElementById('cuisine-suggestions');
-  if (dl) dl.innerHTML = cuisines.map(c => `<option value="${c}">`).join('');
+  if (dl) dl.innerHTML = cuisines.map(c => `<option value="${escapeHTML(c)}">`).join('');
 }
 
 // saves a new recipe!
