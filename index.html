@@ -29,14 +29,14 @@
   body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.3;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>")}
 
-  /* ── buttons ── */
+  /* buttons */
   .btn-primary{font-family:var(--font-mono);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--brick);color:var(--paper);border:none;padding:.85rem 1.8rem;border-radius:3px;cursor:pointer;box-shadow:2px 3px 0 rgba(43,33,23,.25);transition:transform .12s,box-shadow .12s,background .15s}
   .btn-primary:hover{background:var(--orange);transform:translate(-1px,-1px);box-shadow:3px 4px 0 rgba(43,33,23,.25)}
   .btn-primary:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(43,33,23,.25)}
   .btn-secondary{font-family:var(--font-mono);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);border:2px solid var(--ink);padding:calc(.85rem - 2px) 1.8rem;border-radius:3px;cursor:pointer;transition:background .15s,color .15s}
   .btn-secondary:hover{background:var(--ink);color:var(--paper)}
 
-  /* ── password screen ── */
+  /* ─password screen */
   #password-screen{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1.25rem}
   .pw-box{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:2.75rem 2.25rem;text-align:center;max-width:380px;width:100%;box-shadow:4px 6px 0 rgba(43,33,23,.14)}
   .pw-box .logo-text{font-family:var(--font-display);font-size:2rem;color:var(--brick);margin-bottom:.5rem;line-height:1.05}
@@ -51,7 +51,7 @@
 
   #site{display:none;min-height:100vh}
 
-  /* ── nav ── */
+  /* nav */
   nav{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-height:70px;flex-wrap:wrap;border-bottom:4px solid var(--brick)}
   .nav-logo{display:flex;align-items:center;padding:.45rem 0;flex-shrink:1;min-width:0;cursor:pointer}
   .nav-links{display:flex;gap:.3rem;flex-shrink:0;flex-wrap:wrap}
@@ -62,7 +62,7 @@
 
   .page{display:none}.page.active{display:block}
 
-  /* ── home hero ── */
+  /* home hero */
   .home-hero{padding:3.5rem 1.5rem 3rem;text-align:center;border-bottom:2px solid var(--line);display:flex;flex-direction:column;align-items:center}
   .ransom-nav{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem .45rem}
   .ransom-nav .rn-word{display:flex;flex-wrap:wrap;align-items:center}
@@ -78,7 +78,7 @@
   .qdot.active{background:var(--brick);transform:scale(1.15)}
   .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
 
-  /* ── home stats ── */
+  /* home stats */
   .home-grid{max-width:640px;margin:3rem auto;padding:0 1.5rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
   @media (max-width:520px){.home-grid{gap:.75rem}}
   .stat-card{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:1.4rem .75rem;text-align:center;box-shadow:2px 3px 0 rgba(43,33,23,.12)}
@@ -95,7 +95,7 @@
   .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.1}
   .section-rule{border:none;border-top:2px solid var(--ink);margin:.6rem 0 1.5rem}
 
-  /* ── recipe cards ── */
+  /* recipe cards */
   #home-recent,.recipe-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.7rem 1.25rem;padding-top:.6rem}
   .recipe-card{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:1.3rem 1.2rem 1.2rem;cursor:pointer;position:relative;box-shadow:3px 4px 0 rgba(43,33,23,.13);transition:transform .15s,box-shadow .15s}
   .recipe-card:nth-child(3n+1){transform:rotate(-1.1deg)}
@@ -116,7 +116,7 @@
 
   .loading{text-align:center;padding:3rem;color:var(--ink-soft);font-style:italic;font-family:var(--font-body);grid-column:1/-1}
 
-  /* ── recipes page ── */
+  /* recipes page */
   .recipes-page{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem}
   .page-header{margin-bottom:1.75rem}
   .search-bar-wrap{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
@@ -138,7 +138,7 @@
   .recipes-count{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-soft);margin-bottom:1.25rem;letter-spacing:.08em;text-transform:uppercase}
   .no-results{text-align:center;padding:3rem;color:var(--ink-soft);font-style:italic;font-size:1.05rem;font-family:var(--font-body)}
 
-  /* ── detail ── */
+  /* detail-z */
   .recipe-detail{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem}
   .detail-category{display:inline-block;font-family:var(--font-mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:#eafff8;background:var(--teal);padding:.28rem .6rem;border-radius:3px;margin-bottom:.85rem;font-weight:700}
   .detail-title{font-family:var(--font-display);font-size:clamp(2rem,5.5vw,3.2rem);color:var(--ink);margin-bottom:.75rem;line-height:1.05}
@@ -161,7 +161,7 @@
   .btn-action:hover{background:var(--ink);color:var(--paper)}
   .btn-action svg{width:14px;height:14px;flex-shrink:0}
 
-  /* ── add form ── */
+  /* add form */
   .add-page{max-width:720px;margin:0 auto;padding:2.5rem 1.5rem}
   .form-group{margin-bottom:1.5rem}
   .form-label{display:block;font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:.45rem;font-weight:700}
@@ -176,7 +176,7 @@
   .error-msg{background:#fbe9e6;border:1.5px solid var(--brick);color:#7a241b;padding:1rem 1.25rem;border-radius:3px;font-family:var(--font-body);font-size:.95rem;margin-bottom:1.5rem;display:none}
   .saving-btn{opacity:.6;pointer-events:none}
 
-  /* ── a11y ── */
+  /* a11y */
   .nav-btn:focus-visible,.btn-primary:focus-visible,.btn-secondary:focus-visible,.btn-enter:focus-visible,.cat-btn:focus-visible,.recipe-card:focus-visible,.btn-action:focus-visible,.back-btn:focus-visible,.qdot:focus-visible,.search-input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important}
@@ -186,7 +186,7 @@
   /* long single words (like "Kardemummabullar") wrap instead of spilling out of the box */
   .card-title,.detail-title,.section-title,.ingredients-box li,.step p,.card-meta,.detail-meta{overflow-wrap:anywhere;word-break:break-word}
 
-  /* ── print ── */
+  /* print */
   @media print{
     #password-screen,nav,.back-btn,.recipe-actions,body::before{display:none !important}
     body{background:#fff !important}
@@ -354,26 +354,26 @@
 </div>
 
 <script>
-// EASTER EGG for anyone snooping around in the console 
+// EASTER EGG for anyone snooping around in the console. pls don't hack me lol 
 console.log(`%c
 ██████╗  ██████╗ ██████╗ ███╗   ██╗    ███████╗ █████╗ ███╗   ███╗██╗██╗  ██╗   ██╗
 ██╔══██╗██╔═══██╗██╔══██╗████╗  ██║    ██╔════╝██╔══██╗████╗ ████║██║██║  ╚██╗ ██╔╝
 ██║  ██║██║   ██║██████╔╝██╔██╗ ██║    █████╗  ███████║██╔████╔██║██║██║   ╚████╔╝ 
 ██║  ██║██║   ██║██╔══██╗██║╚██╗██║    ██╔══╝  ██╔══██║██║╚██╔╝██║██║██║    ╚██╔╝  
-██████╔╝╚██████╔╝██║  ██║██║ ╚████║    ██║     ██║  ██║██║ ╚═╝ ██║██║███████╗██║   
+██████╔╝╚██████╔╝██║  ██║██║ ╚████║    ██║     ██║  ██║██║ ╚═╝ ██║██║███████╗██║   recipez 
 ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚═╝  
 `, 'color: #9b4f2a; font-family: monospace;');
-console.log('%c👋 oh hi!! you found the console!', 'font-size: 16px; font-weight: bold; color: #3d2b14;');
-console.log('%ci made this website to share my family\'s recipes :)', 'font-size: 13px; color: #6b4c2a;');
+console.log('%c👋 ello! you found the console!', 'font-size: 16px; font-weight: bold; color: #3d2b14;');
+console.log('%cthis is meant to store my family\'s recipes :)', 'font-size: 13px; color: #6b4c2a;');
 console.log('%cif you\'re a developer and you see something horrifying in this code,', 'font-size: 13px; color: #6b4c2a;');
 console.log('%cplease know that i tried my best and i\'m still learning', 'font-size: 13px; color: #6b4c2a;');
 console.log('%c                                        — Kait', 'font-size: 13px; font-style: italic; color: #9b4f2a;');
 console.log('%c(p.s. yes the password is in the source code. no i\'m not fixing it.)', 'font-size: 11px; color: #8a7a68;');
 
-// hi hackers!! enjoy grandma's dill dip ig
+// hi hackers! enjoy grandma's dill dip ig lol
 const CORRECT_PASSWORD = "skker1991";
 
-// supabase is a website that stores my data in a database
+// supabase
 const SUPABASE_URL = "https://lzbxhbhheplwplfpapjh.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6YnhoYmhoZXBsd3BsZnBhcGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDY0NTcsImV4cCI6MjA4OTI4MjQ1N30.SESchX38wRIuwNMyA8m_vj9H7m8W-WXEfd8tNlqdDTA";
 
@@ -384,7 +384,7 @@ const HEADERS = {
   "Authorization": "Bearer " + SUPABASE_KEY
 };
 
-// this function talks to supabase
+// function that talks to supabase
 async function dbFetch(path, options = {}) {
   const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
     ...options,
@@ -404,7 +404,7 @@ async function loadRecipes() {
 async function insertRecipe(recipe) {
   return await dbFetch("recipes", {
     method: "POST",
-    headers: { "Prefer": "return=representation" }, // this line makes it return the saved recipe. took me ages to find this
+    headers: { "Prefer": "return=representation" }, // this line makes it return the saved recipe
     body: JSON.stringify(recipe)
   });
 }
@@ -455,7 +455,7 @@ function advanceQuote() { showQuote((currentQuote + 1) % QUOTES.length, true); }
 function goToQuote(idx) { clearInterval(quoteTimer); showQuote(idx, true); quoteTimer = setInterval(() => advanceQuote(), 8000); }
 
 // ── App state ────────────────────────────────────────────
-// these are "global variables".. I'm told this is bad practice?
+// these are "global variables".. uh oh
 // but i don't know where else to put them so here we are
 let allRecipes = [];
 let activeCategory = "All"; // "All" means show everything
