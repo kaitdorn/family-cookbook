@@ -467,6 +467,8 @@ function checkPw() {
   if (val === CORRECT_PASSWORD) {
     document.getElementById('password-screen').style.display = 'none';
     document.getElementById('site').style.display = 'block';
+    // make the home page the first browser-history entry so Back works in-app
+    try { history.replaceState({ view: 'page', name: 'home' }, ''); } catch (e) {}
     initQuotes();
     loadAndRender();
   } else {
@@ -514,15 +516,40 @@ function showErrorState() {
 }
 
 // this swaps between pages without reloading!! single page app!! very cool!!
-function showPage(name, btn) {
+// `fromHistory` is true when the browser Back/Forward button triggered this,
+// so we DON'T push another history entry (that would cause a loop)
+function showPage(name, btn, fromHistory) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
+  setActiveNav(name);
   if (name === 'home') renderHome();
   if (name === 'recipes') { renderRecipes(); buildCatFilters(); }
   window.scrollTo({ top: 0 }); // always start a new page at the top
+  if (!fromHistory) pushView({ view: 'page', name });
 }
+
+// highlights the correct nav tab by page name (works even when there's no
+// button to click — e.g. when the browser Back button navigates for us)
+function setActiveNav(name) {
+  const idx = { home: 0, recipes: 1, add: 2, detail: 1 }[name];
+  document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+// records the current view in browser history so Back/Forward work.
+// leaves the URL unchanged; try/catch in case history isn't available
+function pushView(state) {
+  try { history.pushState(state, ''); } catch (e) {}
+}
+
+// the browser Back/Forward buttons land here — we re-show the right view in
+// place (no reload), so you go home/recipes instead of back to the login
+window.addEventListener('popstate', function (e) {
+  if (document.getElementById('site').style.display !== 'block') return; // still on login
+  const st = e.state;
+  if (st && st.view === 'detail') openDetail(st.id, true);
+  else if (st && st.view === 'page') showPage(st.name, null, true);
+  else showPage('home', null, true);
+});
 
 // this converts the raw database object into something nicer to work with
 // "normalize" ??
@@ -724,7 +751,7 @@ function filterRecipes() {
 
 function renderRecipes() { filterRecipes(); }
 
-function openDetail(id) {
+function openDetail(id, fromHistory) {
   const raw = allRecipes.find(x => x.id === id);
   if (!raw) return;
   const r = normalize(raw);
@@ -744,11 +771,14 @@ function openDetail(id) {
     </div>`;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.textContent === 'Recipes'));
+  setActiveNav('detail');
   window.scrollTo({ top: 0 }); // jump to the top so you start reading at the title
+  if (!fromHistory) pushView({ view: 'detail', id });
 }
 
-function goBackToRecipes() { showPage('recipes', document.querySelectorAll('.nav-btn')[1]); }
+// the in-page "Back to Recipes" button steps the browser back, so it stays in
+// sync with Safari's Back button and doesn't pile up duplicate history entries
+function goBackToRecipes() { history.back(); }
 
 async function downloadRecipePDF() {
   const btn = document.getElementById('download-btn');
