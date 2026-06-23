@@ -382,9 +382,9 @@
       <hr class="section-rule" style="margin-bottom:1.5rem">
 
       <div id="suggest-form-area">
-        <p class="suggest-intro">Got a recipe you wish was here, an idea to make the site better, or a bug to report? Drop it below — every one gets read.</p>
-        <div class="success-msg" id="sug-success">Thanks so much — your suggestion is in! 🙌</div>
-        <div class="error-msg" id="sug-error">Hmm, that didn't go through. Please try again.</div>
+        <p class="suggest-intro">Got an idea to make the site better, or a bug to report? Drop it below.</p>
+        <div class="success-msg" id="sug-success">Form Received! Thank you.</div>
+        <div class="error-msg" id="sug-error">Hmm, that didn't go through... Please try again.</div>
 
         <div class="form-group">
           <label class="form-label">Your suggestion *</label>
@@ -411,7 +411,7 @@
 
       <!-- editor unlock (hidden until the dot is clicked) -->
       <div class="editor-gate" id="editor-gate" style="display:none;">
-        <label class="form-label">Editor access</label>
+        <label class="form-label">kaitlyn only access</label>
         <div class="editor-gate-row">
           <input type="password" class="form-input" id="editor-pw" placeholder="••••••" onkeydown="if(event.key==='Enter')unlockInbox()">
           <button class="btn-secondary" onclick="unlockInbox()" style="padding:.6rem 1.2rem;">Open</button>
@@ -422,7 +422,7 @@
       <!-- editor inbox (hidden until unlocked) -->
       <div class="editor-inbox" id="editor-inbox" style="display:none;">
         <div class="section-title" style="font-size:1.4rem;">Suggestion Inbox</div>
-        <p class="suggest-intro" style="font-size:.85rem;">Read-only here. To clear one once you've handled it, delete it in your Supabase dashboard.</p>
+        <p class="suggest-intro" style="font-size:.85rem;">Read-only.</p>
         <div id="inbox-list"></div>
       </div>
     </div>
@@ -439,17 +439,13 @@ console.log(`%c
 ██████╔╝╚██████╔╝██║  ██║██║ ╚████║    ██║     ██║  ██║██║ ╚═╝ ██║██║███████╗██║   
 ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚═╝  
 `, 'color: #9b4f2a; font-family: monospace;');
-console.log('%c👋 oh hi!! you found the console!', 'font-size: 16px; font-weight: bold; color: #3d2b14;');
-console.log('%ci made this website to share my family\'s recipes :)', 'font-size: 13px; color: #6b4c2a;');
-console.log('%cif you\'re a developer and you see something horrifying in this code,', 'font-size: 13px; color: #6b4c2a;');
-console.log('%cplease know that i tried my best and i\'m still learning', 'font-size: 13px; color: #6b4c2a;');
-console.log('%c                                        — Kait', 'font-size: 13px; font-style: italic; color: #9b4f2a;');
+console.log('%cello! you found the console!', 'font-size: 16px; font-weight: bold; color: #3d2b14;');
 console.log('%c(p.s. yes the password is in the source code. no i\'m not fixing it.)', 'font-size: 11px; color: #8a7a68;');
 
-// hi hackers!! enjoy grandma's dill dip ig
+// hi hackers! enjoy grandma's dill dip ig
 const CORRECT_PASSWORD = "skker1991";
 
-// supabase is a website that stores my data in a database
+// supabase 
 const SUPABASE_URL = "https://lzbxhbhheplwplfpapjh.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6YnhoYmhoZXBsd3BsZnBhcGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDY0NTcsImV4cCI6MjA4OTI4MjQ1N30.SESchX38wRIuwNMyA8m_vj9H7m8W-WXEfd8tNlqdDTA";
 
@@ -460,7 +456,7 @@ const HEADERS = {
   "Authorization": "Bearer " + SUPABASE_KEY
 };
 
-// this function talks to supabase
+// talks to supabase
 async function dbFetch(path, options = {}) {
   const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
     ...options,
@@ -480,7 +476,7 @@ async function loadRecipes() {
 async function insertRecipe(recipe) {
   return await dbFetch("recipes", {
     method: "POST",
-    headers: { "Prefer": "return=representation" }, // this line makes it return the saved recipe. took me ages to find this
+    headers: { "Prefer": "return=representation" }, // this line makes it return the saved recipe
     body: JSON.stringify(recipe)
   });
 }
@@ -1087,10 +1083,8 @@ async function saveRecipe() {
 }
 
 // ── Suggestions ─────────────────────────────────────────
-// editor password for the hidden inbox — CHANGE THIS to whatever you like.
-// (soft lock: like the main password it lives in the page source, so it keeps
-//  casual family out of the inbox but isn't true security.)
-const EDITOR_PASSWORD = "dorn-editor";
+// editor password 
+const EDITOR_PASSWORD = "kaitlyneditor";
 
 // family members submit a suggestion -> saved to the Supabase "suggestions" table
 async function saveSuggestion() {
