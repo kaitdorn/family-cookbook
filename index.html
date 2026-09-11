@@ -6,7 +6,10 @@
 <title>Dorn Family Recipes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Shrikhand&family=Oswald:wght@600&family=Special+Elite&family=Permanent+Marker&family=DM+Serif+Display&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- trimmed from 9 font families down to 6. dropped Archivo Black, Oswald and
+     DM Serif Display - they were only ever used by the ransom-note logo and
+     were costing a few hundred KB on first load, mostly on phones. -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Shrikhand&family=Special+Elite&family=Permanent+Marker&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     /* new retro print palette */
@@ -28,6 +31,9 @@
   /* faint paper grain over the whole page */
   body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.3;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>")}
+
+  /* screen-reader-only text: invisible on screen, still read aloud */
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
   /* ── buttons ── */
   .btn-primary{font-family:var(--font-mono);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--brick);color:var(--paper);border:none;padding:.85rem 1.8rem;border-radius:3px;cursor:pointer;box-shadow:2px 3px 0 rgba(43,33,23,.25);transition:transform .12s,box-shadow .12s,background .15s}
@@ -53,7 +59,7 @@
 
   /* ── nav ── */
   nav{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-height:70px;flex-wrap:wrap;border-bottom:4px solid var(--brick)}
-  .nav-logo{display:flex;align-items:center;padding:.45rem 0;flex-shrink:1;min-width:0;cursor:pointer}
+  .nav-logo{display:flex;align-items:center;padding:.45rem 0;flex-shrink:1;min-width:0;cursor:pointer;background:none;border:none;border-radius:3px}
   .nav-links{display:flex;gap:.3rem;flex-shrink:0;flex-wrap:wrap}
   .nav-btn{background:none;border:none;color:rgba(244,234,208,.72);font-family:var(--font-mono);font-size:clamp(.66rem,2.3vw,.74rem);font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .7rem;cursor:pointer;border-radius:3px;transition:color .18s,background .18s;white-space:nowrap}
   .nav-btn:hover{color:var(--paper);background:rgba(255,255,255,.08)}
@@ -68,7 +74,7 @@
   .ransom-nav .rn-word{display:flex;flex-wrap:wrap;align-items:center}
   .scrap{display:inline-block;line-height:.9;position:relative;border-radius:2px}
   .ransom-nav .scrap{font-size:clamp(.82rem,3.2vw,1.1rem);padding:.2em .18em .05em;margin:0 .01em;border:0.5px solid rgba(244,234,208,.16);box-shadow:1px 1px 0 rgba(0,0,0,.4)}
-  .hero-eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--brick);margin-bottom:1.25rem}
+  .hero-eyebrow{font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--brick);margin-bottom:1.25rem}
   .quote-wrap{max-width:640px;margin:0 auto 1.1rem;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center}
   .quote-text{font-family:var(--font-body);font-weight:500;font-style:italic;font-size:clamp(1.3rem,3.4vw,1.9rem);color:var(--ink);line-height:1.4;margin-bottom:.75rem;transition:opacity .6s}
   .quote-text.fade,.quote-attr.fade{opacity:0}
@@ -92,12 +98,12 @@
   .stat-card .stat-label{font-family:var(--font-mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-top:.4rem}
 
   .recent-section{max-width:980px;margin:0 auto 3.5rem;padding:0 1.5rem}
-  .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.1}
+  .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.1;font-weight:400}
   .section-rule{border:none;border-top:2px solid var(--ink);margin:.6rem 0 1.5rem}
 
   /* ── recipe cards ── */
   #home-recent,.recipe-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.7rem 1.25rem;padding-top:.6rem}
-  .recipe-card{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:1.3rem 1.2rem 1.2rem;cursor:pointer;position:relative;box-shadow:3px 4px 0 rgba(43,33,23,.13);transition:transform .15s,box-shadow .15s}
+  .recipe-card{background:var(--paper-2);border:1.5px solid var(--line);border-radius:4px;padding:1.3rem 1.2rem 1.2rem;cursor:pointer;position:relative;box-shadow:3px 4px 0 rgba(43,33,23,.13);transition:transform .15s,box-shadow .15s;text-align:left}
   .recipe-card:nth-child(3n+1){transform:rotate(-1.1deg)}
   .recipe-card:nth-child(3n+2){transform:rotate(.8deg)}
   .recipe-card:nth-child(3n){transform:rotate(-.4deg)}
@@ -111,7 +117,7 @@
   .recipe-card:nth-child(5n+4){--clip:#E2A52C}
   .recipe-card:nth-child(5n+5){--clip:#2C7E76}
   .recipe-card .card-category{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--brick);margin-bottom:.45rem;font-weight:700}
-  .recipe-card .card-title{font-family:var(--font-display);font-size:1.25rem;color:var(--ink);margin-bottom:.55rem;line-height:1.12}
+  .recipe-card .card-title{font-family:var(--font-display);font-size:1.25rem;color:var(--ink);margin-bottom:.55rem;line-height:1.12;font-weight:400}
   .recipe-card .card-meta{font-family:var(--font-mono);font-size:.64rem;color:var(--ink-soft);display:flex;gap:.85rem;flex-wrap:wrap;letter-spacing:.02em}
 
   .loading{text-align:center;padding:3rem;color:var(--ink-soft);font-style:italic;font-family:var(--font-body);grid-column:1/-1}
@@ -123,6 +129,7 @@
   .search-input{flex:1;min-width:180px;padding:.7rem 1rem;border:2px solid var(--line);border-radius:3px;background:var(--paper-2);font-family:var(--font-body);font-size:1rem;color:var(--ink);outline:none;transition:border-color .2s}
   .search-input:focus{border-color:var(--brick)}
   .search-input::placeholder{color:var(--ink-soft);opacity:.75}
+  .filter-heading{font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin-bottom:.4rem}
   .cat-filters{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1.4rem}
   /* category buttons styled as little price-tag stickers */
   .cat-btn{font-family:var(--font-mono);font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:3px;padding:.4rem .85rem .4rem 1.4rem;cursor:pointer;position:relative;box-shadow:1px 2px 0 rgba(43,33,23,.18);transition:transform .12s,box-shadow .12s;outline:2px solid transparent;outline-offset:1px}
@@ -141,11 +148,11 @@
   /* ── detail ── */
   .recipe-detail{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem}
   .detail-category{display:inline-block;font-family:var(--font-mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:#eafff8;background:var(--teal);padding:.28rem .6rem;border-radius:3px;margin-bottom:.85rem;font-weight:700}
-  .detail-title{font-family:var(--font-display);font-size:clamp(2rem,5.5vw,3.2rem);color:var(--ink);margin-bottom:.75rem;line-height:1.05}
+  .detail-title{font-family:var(--font-display);font-size:clamp(2rem,5.5vw,3.2rem);color:var(--ink);margin-bottom:.75rem;line-height:1.05;font-weight:400}
   .detail-meta{display:flex;gap:1.25rem;font-family:var(--font-mono);font-size:.68rem;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase;border-top:2px solid var(--line);border-bottom:2px solid var(--line);padding:.7rem 0;margin:1rem 0 2rem;flex-wrap:wrap}
   .detail-grid{display:grid;grid-template-columns:1fr 2fr;gap:2.5rem}
   @media (max-width:580px){.detail-grid{grid-template-columns:1fr}}
-  .ingredients-box h3,.instructions-box h3{font-family:var(--font-display);font-size:1.2rem;color:var(--brick);margin-bottom:.85rem;line-height:1.1}
+  .ingredients-box h2,.instructions-box h2{font-family:var(--font-display);font-size:1.2rem;color:var(--brick);margin-bottom:.85rem;line-height:1.1;font-weight:400}
   .ingredients-box ul{list-style:none}
   .ingredients-box li{padding:.45rem 0;border-bottom:1px dashed var(--line);font-family:var(--font-body);font-size:.98rem;color:var(--ink);line-height:1.45}
   .ingredients-box li.ing-section-title{font-family:var(--font-display);font-size:1rem;color:var(--olive);border-bottom:none;padding:1rem 0 .3rem;letter-spacing:0}
@@ -160,6 +167,9 @@
   .btn-action{display:flex;align-items:center;gap:.45rem;background:transparent;border:2px solid var(--ink);border-radius:3px;color:var(--ink);font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.45rem 1rem;cursor:pointer;transition:background .18s,color .18s}
   .btn-action:hover{background:var(--ink);color:var(--paper)}
   .btn-action svg{width:14px;height:14px;flex-shrink:0}
+  /* delete is the one destructive action on the site, so it reads in brick red */
+  .btn-danger{border-color:var(--brick);color:var(--brick)}
+  .btn-danger:hover{background:var(--brick);color:var(--paper)}
 
   /* ── add form ── */
   .add-page{max-width:720px;margin:0 auto;padding:2.5rem 1.5rem}
@@ -175,9 +185,13 @@
   .success-msg{background:#eef3e2;border:1.5px solid var(--olive);color:#3f4a1e;padding:1rem 1.25rem;border-radius:3px;font-family:var(--font-body);font-size:.95rem;margin-bottom:1.5rem;display:none}
   .error-msg{background:#fbe9e6;border:1.5px solid var(--brick);color:#7a241b;padding:1rem 1.25rem;border-radius:3px;font-family:var(--font-body);font-size:.95rem;margin-bottom:1.5rem;display:none}
   .saving-btn{opacity:.6;pointer-events:none}
+  /* strip across the top of the form when you're editing rather than adding */
+  .edit-banner{display:none;background:var(--paper-3);border:1.5px dashed var(--olive);border-radius:3px;padding:.85rem 1.1rem;margin-bottom:1.5rem;font-family:var(--font-body);font-size:.95rem;color:var(--ink)}
+  .form-btn-row{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
 
   /* ── a11y ── */
-  .nav-btn:focus-visible,.btn-primary:focus-visible,.btn-secondary:focus-visible,.btn-enter:focus-visible,.cat-btn:focus-visible,.recipe-card:focus-visible,.btn-action:focus-visible,.back-btn:focus-visible,.qdot:focus-visible,.search-input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+  .nav-btn:focus-visible,.nav-logo:focus-visible,.btn-primary:focus-visible,.btn-secondary:focus-visible,.btn-enter:focus-visible,.cat-btn:focus-visible,.recipe-card:focus-visible,.btn-action:focus-visible,.back-btn:focus-visible,.qdot:focus-visible,.search-input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+  .nav-btn:focus-visible,.nav-logo:focus-visible{outline-color:var(--mustard)}
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important}
     .recipe-card,.stat-card{transform:none !important}
@@ -209,14 +223,15 @@
 
   /* ── print ── */
   @media print{
-    #password-screen,nav,.back-btn,.recipe-actions,body::before{display:none !important}
+    #password-screen,nav,.back-btn,.recipe-actions,.editor-dot,body::before{display:none !important}
     body{background:#fff !important}
     #site{display:block !important}
-    .page{display:none !important}
-    #page-detail{display:block !important}
+    /* only hide the pages that AREN'T open. printing from Home used to print
+       whatever recipe you'd last looked at, which was a fun surprise. */
+    .page:not(.active){display:none !important}
     .recipe-detail{max-width:100%;padding:1rem}
     .detail-grid{grid-template-columns:1fr 2fr}
-    .recipe-card,.stat-card{box-shadow:none}
+    .recipe-card,.stat-card{box-shadow:none;transform:none !important}
   }
 </style>
 </head>
@@ -229,36 +244,37 @@
     <hr class="pw-divider">
     <label class="pw-label" for="pw-input">password</label>
     <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()">
-    <div id="pw-error"></div>
+    <div id="pw-error" role="alert"></div>
     <button class="btn-enter" onclick="checkPw()">Enter the Kitchen</button>
   </div>
 </div>
 
 <div id="site">
   <nav>
-    <div class="nav-logo" onclick="showPage('home', document.querySelectorAll('.nav-btn')[0])">
-      <span class="ransom-nav" id="nav-ransom" aria-label="Dorn Family Recipes"></span>
-    </div>
+    <button type="button" class="nav-logo" onclick="showPage('home')">
+      <span class="ransom-nav" id="nav-ransom" aria-hidden="true"></span>
+      <span class="sr-only">Dorn Family Recipes — go to home</span>
+    </button>
     <div class="nav-links">
-      <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
-      <button class="nav-btn" onclick="showPage('recipes',this)">Recipes</button>
-      <button class="nav-btn" onclick="showPage('add',this)">Add Recipe</button>
-      <button class="nav-btn" onclick="showPage('suggestions',this)">Suggestions</button>
+      <button class="nav-btn active" onclick="showPage('home')">Home</button>
+      <button class="nav-btn" onclick="showPage('recipes')">Recipes</button>
+      <button class="nav-btn" onclick="showPage('add')">Add Recipe</button>
+      <button class="nav-btn" onclick="showPage('suggestions')">Suggestions</button>
     </div>
   </nav>
 
   <!-- HOME PAGE -->
   <div id="page-home" class="page active">
     <div class="home-hero">
-      <div class="hero-eyebrow">The Dorn Family Cookbook</div>
+      <h1 class="hero-eyebrow">The Dorn Family Cookbook</h1>
       <div class="quote-wrap">
         <div class="quote-text" id="quote-text"></div>
         <div class="quote-attr" id="quote-attr"></div>
       </div>
       <div class="quote-dots" id="quote-dots"></div>
       <div class="hero-btns">
-        <button class="btn-primary" onclick="showPage('recipes', document.querySelectorAll('.nav-btn')[1])">Browse Recipes</button>
-        <button class="btn-secondary" onclick="showPage('add', document.querySelectorAll('.nav-btn')[2])">Add a Recipe</button>
+        <button class="btn-primary" onclick="showPage('recipes')">Browse Recipes</button>
+        <button class="btn-secondary" onclick="showPage('add')">Add a Recipe</button>
       </div>
     </div>
     <div class="home-grid">
@@ -267,7 +283,7 @@
       <div class="stat-card"><span class="stat-num" id="cuisine-count">—</span><div class="stat-label">Cuisines</div></div>
     </div>
     <div class="recent-section">
-      <div class="section-title">Recently Added</div>
+      <h2 class="section-title">Recently Added</h2>
       <hr class="section-rule">
       <div id="home-recent"><div class="loading">Loading recipes...</div></div>
     </div>
@@ -276,17 +292,18 @@
   <!-- RECIPES PAGE -->
   <div id="page-recipes" class="page">
     <div class="recipes-page">
-      <div class="page-header"><div class="section-title">All Recipes</div><hr class="section-rule"></div>
+      <div class="page-header"><h1 class="section-title">All Recipes</h1><hr class="section-rule"></div>
       <div class="search-bar-wrap">
+        <label class="sr-only" for="search-input">Search recipes</label>
         <input type="text" class="search-input" id="search-input" placeholder="Search by name, ingredient, or cook…" oninput="filterRecipes()">
       </div>
-      <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Category</div>
-      <div class="cat-filters" id="cat-filters"></div>
-      <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Cuisine</div>
-      <div class="cat-filters" id="cuisine-filters"></div>
-      <div style="margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--faded);">Course</div>
-      <div class="cat-filters" id="course-filters"></div>
-      <div class="recipes-count" id="recipes-count"></div>
+      <h2 class="filter-heading" id="cat-filters-label">Category</h2>
+      <div class="cat-filters" id="cat-filters" role="group" aria-labelledby="cat-filters-label"></div>
+      <h2 class="filter-heading" id="cuisine-filters-label">Cuisine</h2>
+      <div class="cat-filters" id="cuisine-filters" role="group" aria-labelledby="cuisine-filters-label"></div>
+      <h2 class="filter-heading" id="course-filters-label">Course</h2>
+      <div class="cat-filters" id="course-filters" role="group" aria-labelledby="course-filters-label"></div>
+      <div class="recipes-count" id="recipes-count" role="status"></div>
       <div class="recipe-cards" id="recipes-grid"></div>
       <div class="no-results" id="no-results" style="display:none;">No recipes found — try a different search.</div>
     </div>
@@ -295,36 +312,46 @@
   <!-- RECIPE DETAIL PAGE -->
   <div id="page-detail" class="page">
     <div class="recipe-detail">
-      <button class="back-btn" onclick="goBackToRecipes()">&#8592; Back to Recipes</button>
+      <button class="back-btn" onclick="goBack()">&#8592; Back</button>
       <div class="recipe-actions">
         <button class="btn-action" id="download-btn" onclick="downloadRecipePDF()" title="Save as PDF">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
           Download PDF
+        </button>
+        <!-- these two only appear once the editor password has been entered -->
+        <button class="btn-action" id="edit-btn" style="display:none;" onclick="startEditRecipe()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+          Edit
+        </button>
+        <button class="btn-action btn-danger" id="delete-btn" style="display:none;" onclick="deleteCurrentRecipe()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+          Delete
         </button>
       </div>
       <div id="detail-content"></div>
     </div>
   </div>
 
-  <!-- ADD RECIPE PAGE -->
+  <!-- ADD / EDIT RECIPE PAGE -->
   <div id="page-add" class="page">
     <div class="add-page">
-      <div class="section-title">Add a New Recipe</div>
+      <h1 class="section-title" id="add-heading">Add a New Recipe</h1>
       <hr class="section-rule" style="margin-bottom:2rem">
-      <div class="success-msg" id="success-msg">Recipe saved! Find it in the Recipes page.</div>
-      <div class="error-msg" id="error-msg">Something went wrong saving the recipe. Please try again.</div>
+      <div class="edit-banner" id="edit-banner">Editing <strong id="edit-banner-name"></strong>. Your changes replace what's saved.</div>
+      <div class="success-msg" id="success-msg" role="status">Recipe saved! Find it in the Recipes page.</div>
+      <div class="error-msg" id="error-msg" role="alert">Something went wrong saving the recipe. Please try again.</div>
 
       <div class="form-group">
-        <label class="form-label">Recipe Name *</label>
+        <label class="form-label" for="f-name">Recipe Name *</label>
         <input type="text" class="form-input" id="f-name" placeholder="e.g. Grandma's Apple Pie">
       </div>
       <div class="form-row">
         <div class="form-group" style="grid-column: span 2;">
-          <label class="form-label">Category *</label>
+          <label class="form-label" for="f-category">Category *</label>
           <select class="form-select" id="f-category">
             <option value="">Select a category...</option>
             <option>Beverage</option><option>Bread</option><option>Breakfast</option>
-            <option>Cake</option><option>Candy & Confections</option><option>Chicken</option>
+            <option>Cake</option><option>Candy &amp; Confections</option><option>Chicken</option>
             <option>Cookies</option><option>Dip</option><option>Dressing</option>
             <option>Fish</option><option>Pasta</option><option>Pastries</option>
             <option>Rice</option><option>Salad</option><option>Salsa</option>
@@ -333,18 +360,18 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Submitted By *</label>
+          <label class="form-label" for="f-submitted-by">Submitted By *</label>
           <input type="text" class="form-input" id="f-submitted-by" placeholder="Your name">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group" style="grid-column: span 2;">
-          <label class="form-label">Cuisine <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
+          <label class="form-label" for="f-cuisine">Cuisine <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
           <input type="text" class="form-input" id="f-cuisine" list="cuisine-suggestions" placeholder="e.g. Italian, Thai, Mexican...">
           <datalist id="cuisine-suggestions"></datalist>
         </div>
         <div class="form-group">
-          <label class="form-label">Course <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
+          <label class="form-label" for="f-course">Course <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
           <select class="form-select" id="f-course">
             <option value="">Select a course...</option>
             <option>Main</option><option>Side</option><option>Appetizer</option>
@@ -353,76 +380,80 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Time</label><input type="text" class="form-input" id="f-time" placeholder="e.g. 1 hour 30 min"></div>
-        <div class="form-group"><label class="form-label">Servings</label><input type="text" class="form-input" id="f-servings" placeholder="e.g. 8"></div>
+        <div class="form-group"><label class="form-label" for="f-time">Time</label><input type="text" class="form-input" id="f-time" placeholder="e.g. 1 hour 30 min"></div>
+        <div class="form-group"><label class="form-label" for="f-servings">Servings</label><input type="text" class="form-input" id="f-servings" placeholder="e.g. 8"></div>
       </div>
       <div class="form-group">
-        <label class="form-label">Ingredients *</label>
+        <label class="form-label" for="f-ingredients">Ingredients *</label>
         <textarea class="form-textarea" id="f-ingredients" rows="8" placeholder="For the Salad:&#10;1 cup chickpeas&#10;1 cucumber, diced&#10;&#10;For the Dressing:&#10;1 cup Greek yogurt&#10;1/4 cup lemon juice"></textarea>
         <div class="form-hint">One ingredient per line. Got a recipe with parts? End a line with a colon to start a section — like <em>For the Dressing:</em></div>
       </div>
       <div class="form-group">
-        <label class="form-label">Instructions *</label>
+        <label class="form-label" for="f-instructions">Instructions *</label>
         <textarea class="form-textarea" id="f-instructions" rows="8" placeholder="Preheat oven to 350°F.&#10;Mix dry ingredients together.&#10;..."></textarea>
         <div class="form-hint">One step per line. Each step will automatically be numbered. All you have to do is hit enter after each step to start the new line.</div>
       </div>
       <div class="form-group">
-        <label class="form-label">Notes / Story</label>
+        <label class="form-label" for="f-notes">Notes / Story</label>
         <textarea class="form-textarea" id="f-notes" rows="3" placeholder="Any family notes, tips, or the story behind this recipe..."></textarea>
       </div>
-      <button class="btn-primary" id="save-btn" onclick="saveRecipe()" style="padding:0.9rem 2.5rem;font-size:0.95rem;">Save Recipe</button>
-      <p class="add-suggest-link">Suggestions? Ideas for improvement? Bugs? Want a feature you don't see? <a href="#" onclick="showPage('suggestions', document.querySelectorAll('.nav-btn')[3]); return false;">Fill out this form</a></p>
+      <div class="form-btn-row">
+        <button class="btn-primary" id="save-btn" onclick="saveRecipe()" style="padding:0.9rem 2.5rem;font-size:0.95rem;">Save Recipe</button>
+        <button class="btn-secondary" id="cancel-edit-btn" style="display:none;padding:0.9rem 2rem;" onclick="cancelEdit()">Cancel</button>
+      </div>
+      <p class="add-suggest-link">Suggestions? Ideas for improvement? Bugs? Want a feature you don't see? <a href="#" onclick="showPage('suggestions'); return false;">Fill out this form</a></p>
     </div>
   </div>
 
   <!-- SUGGESTIONS PAGE -->
   <div id="page-suggestions" class="page">
     <div class="suggestions-page">
-      <div class="section-title">Suggestions</div>
+      <h1 class="section-title">Suggestions</h1>
       <hr class="section-rule" style="margin-bottom:1.5rem">
 
       <div id="suggest-form-area">
         <p class="suggest-intro">Got an idea to make the site better, or a bug to report? Drop it below.</p>
-        <div class="success-msg" id="sug-success">Form Received! Thank you.</div>
-        <div class="error-msg" id="sug-error">Hmm, that didn't go through... Please try again.</div>
+        <div class="success-msg" id="sug-success" role="status">Form Received! Thank you.</div>
+        <div class="error-msg" id="sug-error" role="alert">Hmm, that didn't go through... Please try again.</div>
 
         <div class="form-group">
-          <label class="form-label">Your suggestion *</label>
+          <label class="form-label" for="sug-text">Your suggestion *</label>
           <textarea class="form-textarea" id="sug-text" rows="5" placeholder="A recipe request, an idea, something that's not working..."></textarea>
         </div>
         <div class="form-row">
           <div class="form-group" style="grid-column: span 2;">
-            <label class="form-label">Type <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
+            <label class="form-label" for="sug-category">Type <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
             <select class="form-select" id="sug-category">
               <option value="">Pick one...</option>
               <option>Recipe request</option><option>Suggestion</option><option>Bug</option><option>Feature</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Your name <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
+            <label class="form-label" for="sug-name">Your name <span style="font-size:0.75rem;font-style:italic;">(optional)</span></label>
             <input type="text" class="form-input" id="sug-name" placeholder="Optional">
           </div>
         </div>
         <button class="btn-primary" id="sug-save-btn" onclick="saveSuggestion()" style="padding:0.9rem 2.5rem;font-size:0.95rem;">Send Suggestion</button>
       </div>
 
-      <!-- discreet, unlabeled editor entrance -->
-      <button class="editor-dot" id="editor-dot" onclick="openEditorGate()" aria-label=" "></button>
+      <!-- discreet, unlabeled editor entrance. hidden from screen readers and
+           skipped by the tab key so it stays as quiet as it looks. -->
+      <button class="editor-dot" id="editor-dot" onclick="openEditorGate()" aria-hidden="true" tabindex="-1"></button>
 
       <!-- editor unlock (hidden until the dot is clicked) -->
       <div class="editor-gate" id="editor-gate" style="display:none;">
-        <label class="form-label">kaitlyn only access</label>
+        <label class="form-label" for="editor-pw">kaitlyn only access</label>
         <div class="editor-gate-row">
           <input type="password" class="form-input" id="editor-pw" placeholder="••••••" onkeydown="if(event.key==='Enter')unlockInbox()">
           <button class="btn-secondary" onclick="unlockInbox()" style="padding:.6rem 1.2rem;">Open</button>
         </div>
-        <div id="editor-pw-error" style="color:var(--brick);font-family:var(--font-mono);font-size:.72rem;min-height:1em;margin-top:.5rem;"></div>
+        <div id="editor-pw-error" role="alert" style="color:var(--brick);font-family:var(--font-mono);font-size:.72rem;min-height:1em;margin-top:.5rem;"></div>
       </div>
 
       <!-- editor inbox (hidden until unlocked) -->
       <div class="editor-inbox" id="editor-inbox" style="display:none;">
-        <div class="section-title" style="font-size:1.4rem;">Suggestion Inbox</div>
-        <p class="suggest-intro" style="font-size:.85rem;">Read-only.</p>
+        <h2 class="section-title" style="font-size:1.4rem;">Suggestion Inbox</h2>
+        <p class="suggest-intro" style="font-size:.85rem;">Read-only. Editing is now on for recipes — open any recipe to edit or delete it.</p>
         <div id="inbox-list"></div>
       </div>
     </div>
@@ -481,6 +512,41 @@ async function insertRecipe(recipe) {
   });
 }
 
+// overwrites an existing recipe (used by the edit form)
+async function updateRecipeRow(id, recipe) {
+  return await dbFetch("recipes?id=eq." + encodeURIComponent(id), {
+    method: "PATCH",
+    headers: { "Prefer": "return=representation" },
+    body: JSON.stringify(recipe)
+  });
+}
+
+// removes a recipe for good
+async function deleteRecipeRow(id) {
+  return await dbFetch("recipes?id=eq." + encodeURIComponent(id), {
+    method: "DELETE",
+    headers: { "Prefer": "return=minimal" }
+  });
+}
+
+// ── tiny helpers ─────────────────────────────────────────
+// sessionStorage can throw in private browsing, so everything goes through these
+function rememberFlag(key) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
+function forgetFlag(key)   { try { sessionStorage.removeItem(key); } catch (e) {} }
+function hasFlag(key)      { try { return sessionStorage.getItem(key) === '1'; } catch (e) { return false; } }
+
+// shows one of the coloured message boxes with whatever text we want
+function showMsg(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (text) el.textContent = text;
+  el.style.display = 'block';
+}
+function hideMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+
 // ── Quotes ──────────────────────────────────────────────
 // rotating quotes on the homepage!
 const QUOTES = [
@@ -496,9 +562,10 @@ let currentQuote = 0;
 let quoteTimer = null;
 
 function initQuotes() {
+  if (quoteTimer) return; // don't stack up a second timer if this runs twice
   const dotsEl = document.getElementById('quote-dots');
   dotsEl.innerHTML = QUOTES.map((_, i) =>
-    `<button class="qdot ${i===0?'active':''}" onclick="goToQuote(${i})"></button>`
+    `<button class="qdot ${i===0?'active':''}" onclick="goToQuote(${i})" aria-label="Quote ${i+1}"></button>`
   ).join('');
   showQuote(0, false);
   quoteTimer = setInterval(() => advanceQuote(), 8000);
@@ -524,25 +591,31 @@ function showQuote(idx, animate) {
 }
 
 function advanceQuote() { showQuote((currentQuote + 1) % QUOTES.length, true); }
-function goToQuote(idx) { clearInterval(quoteTimer); showQuote(idx, true); quoteTimer = setInterval(() => advanceQuote(), 8000); }
+function goToQuote(idx) {
+  clearInterval(quoteTimer);
+  showQuote(idx, true);
+  quoteTimer = setInterval(() => advanceQuote(), 8000);
+}
 
 // ── App state ────────────────────────────────────────────
 // these are "global variables".. I'm told this is bad practice?
 // but i don't know where else to put them so here we are
 let allRecipes = [];
 let activeCategory = "All"; // "All" means show everything
+let activeCuisine = "All";
+let activeCourse = "All";
+let currentDetailId = null;  // which recipe the detail page is showing
+let editingId = null;        // set while the form is editing instead of adding
+let isEditor = false;        // true once the editor password has been entered
 
+// ── Getting in ───────────────────────────────────────────
 // checks if the password is right
 // if wrong, shows an error message and clears the input
 function checkPw() {
   const val = document.getElementById('pw-input').value;
   if (val === CORRECT_PASSWORD) {
-    document.getElementById('password-screen').style.display = 'none';
-    document.getElementById('site').style.display = 'block';
-    // make the home page the first browser-history entry so Back works in-app
-    try { history.replaceState({ view: 'page', name: 'home' }, ''); } catch (e) {}
-    initQuotes();
-    loadAndRender();
+    rememberFlag('dorn_unlocked'); // so a refresh doesn't ask again this session
+    enterSite();
   } else {
     const err = document.getElementById('pw-error');
     err.textContent = "Incorrect password. Try again.";
@@ -551,9 +624,21 @@ function checkPw() {
   }
 }
 
+// drops the password screen and starts the site up
+function enterSite() {
+  document.getElementById('password-screen').style.display = 'none';
+  document.getElementById('site').style.display = 'block';
+  if (hasFlag('dorn_editor')) isEditor = true;
+  // make the home page the first browser-history entry so Back works in-app
+  try { history.replaceState({ view: 'page', name: 'home' }, ''); } catch (e) {}
+  initQuotes();
+  loadAndRender();
+}
+
 // loads all the recipes from supabase and draws everything on screen
 async function loadAndRender() {
   setupFilterListeners();   // safe to call repeatedly; only wires up once
+  setupCardListeners();
   showLoadingState();
   try {
     allRecipes = await loadRecipes();
@@ -587,10 +672,15 @@ function showErrorState() {
   document.getElementById('recipes-count').textContent = '';
 }
 
+// ── Navigation ───────────────────────────────────────────
 // this swaps between pages without reloading!! single page app!! very cool!!
 // `fromHistory` is true when the browser Back/Forward button triggered this,
 // so we DON'T push another history entry (that would cause a loop)
-function showPage(name, btn, fromHistory) {
+function showPage(name, fromHistory, opts) {
+  // leaving the form by any normal route drops you out of edit mode,
+  // unless we're the ones sending you there to edit something
+  if (!(opts && opts.keepEdit)) exitEditMode();
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   setActiveNav(name);
@@ -620,10 +710,16 @@ window.addEventListener('popstate', function (e) {
   if (document.getElementById('site').style.display !== 'block') return; // still on login
   const st = e.state;
   if (st && st.view === 'detail') openDetail(st.id, true);
-  else if (st && st.view === 'page') showPage(st.name, null, true);
-  else showPage('home', null, true);
+  else if (st && st.view === 'page') showPage(st.name, true);
+  else showPage('home', true);
 });
 
+// the in-page Back button just steps the browser back, so it stays in sync
+// with Safari's own Back button. it says "Back" rather than "Back to Recipes"
+// because you might have arrived here from the Home page instead.
+function goBack() { history.back(); }
+
+// ── Rendering ────────────────────────────────────────────
 // this converts the raw database object into something nicer to work with
 // "normalize" ??
 function normalize(r) {
@@ -693,9 +789,11 @@ function renderHome() {
   document.getElementById('cuisine-count').textContent = new Set(allRecipes.map(r => r.cuisine).filter(Boolean)).size;
 }
 
+// cards are now real keyboard targets: tabbable, announced as buttons, and
+// they open on Enter or Space just like the nav buttons do.
 function recipeCardHTML(r) {
   const tags = escapeHTML([r.category, r.cuisine, r.course].filter(Boolean).join(' · '));
-  return `<div class="recipe-card" onclick="openDetail(${r.id})">
+  return `<div class="recipe-card" role="button" tabindex="0" data-id="${escapeHTML(r.id)}" aria-label="Open ${escapeHTML(r.name)}">
     <div class="card-category">${tags}</div>
     <div class="card-title">${escapeHTML(r.name)}</div>
     <div class="card-meta">
@@ -706,9 +804,35 @@ function recipeCardHTML(r) {
   </div>`;
 }
 
-let activeCuisine = "All";
-let activeCourse = "All";
+// one click/keydown listener per grid instead of inline onclick on every card
+let cardListenersReady = false;
+function setupCardListeners() {
+  if (cardListenersReady) return;
+  cardListenersReady = true;
+  ['home-recent', 'recipes-grid'].forEach(id => {
+    const grid = document.getElementById(id);
+    grid.addEventListener('click', e => {
+      const card = e.target.closest('.recipe-card');
+      if (card) openDetailFromCard(card);
+    });
+    grid.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const card = e.target.closest('.recipe-card');
+      if (!card) return;
+      e.preventDefault(); // stop Space from scrolling the page
+      openDetailFromCard(card);
+    });
+  });
+}
 
+// ids come back from Supabase as numbers, but data- attributes are strings,
+// so match loosely rather than with ===
+function openDetailFromCard(card) {
+  const raw = allRecipes.find(x => String(x.id) === card.dataset.id);
+  if (raw) openDetail(raw.id);
+}
+
+// ── Filters ──────────────────────────────────────────────
 // sorts options alphabetically but puts "Other" at the end every time
 // because "Other" should always be last, that's just good manners
 function sortOptions(arr) {
@@ -745,7 +869,7 @@ function buildCatFilters() {
 
 function renderFilterRow(elId, values, activeVal, kind) {
   document.getElementById(elId).innerHTML = values.map(v =>
-    `<button class="cat-btn ${v===activeVal?'active':''}" data-kind="${kind}" data-value="${escapeHTML(v)}">${escapeHTML(v)}</button>`
+    `<button class="cat-btn ${v===activeVal?'active':''}" aria-pressed="${v===activeVal}" data-kind="${kind}" data-value="${escapeHTML(v)}">${escapeHTML(v)}</button>`
   ).join('');
 }
 
@@ -764,7 +888,6 @@ function setupFilterListeners() {
   });
 }
 
-// ── Filters ──────────────────────────────────────────────
 // all three filters (category / cuisine / course) work the same way, so they
 // share ONE function instead of three near-identical copies.
 // when you pick a filter, we keep it and clear any OTHER active filter that
@@ -796,15 +919,11 @@ function setFilter(dim, value) {
   buildCatFilters();
   filterRecipes();
 }
-// kept as small named helpers in case anything else calls them
-function setCategory(v) { setFilter('category', v); }
-function setCuisine(v)  { setFilter('cuisine', v); }
-function setCourse(v)   { setFilter('course', v); }
 
 function filterRecipes() {
   const query = document.getElementById('search-input').value.toLowerCase().trim();
   const filtered = allRecipes.map(normalize).filter(r => {
-    // search now looks across name, ingredients, who submitted it,
+    // search looks across name, ingredients, who submitted it,
     // and the category/cuisine/course tags — not just the name
     const haystack = [
       r.name, r.category, r.cuisine, r.course, r.submittedBy,
@@ -824,24 +943,27 @@ function filterRecipes() {
 
 function renderRecipes() { filterRecipes(); }
 
+// ── Recipe detail ────────────────────────────────────────
 function openDetail(id, fromHistory) {
   const raw = allRecipes.find(x => x.id === id);
   if (!raw) return;
   const r = normalize(raw);
+  currentDetailId = r.id;
   const tags = escapeHTML([r.category, r.cuisine, r.course].filter(Boolean).join(' · '));
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-category">${tags}</div>
-    <div class="detail-title">${escapeHTML(r.name)}</div>
+    <h1 class="detail-title">${escapeHTML(r.name)}</h1>
     <div class="detail-meta">
       ${r.time ? `<span>Time: ${escapeHTML(r.time)}</span>` : ''}
       ${r.servings ? `<span>Serves: ${escapeHTML(r.servings)}</span>` : ''}
       ${r.submittedBy ? `<span>By: ${escapeHTML(r.submittedBy)}</span>` : ''}
     </div>
-    ${r.notes ? `<p style="font-style:italic;color:var(--faded);font-size:0.9rem;margin-bottom:2rem;padding:0.75rem 1rem;border-left:2px solid var(--warm-tan);">${escapeHTML(r.notes)}</p>` : ''}
+    ${r.notes ? `<p class="detail-notes" style="font-style:italic;color:var(--faded);font-size:0.9rem;margin-bottom:2rem;padding:0.75rem 1rem;border-left:2px solid var(--warm-tan);">${escapeHTML(r.notes)}</p>` : ''}
     <div class="detail-grid">
-      <div class="ingredients-box"><h3>Ingredients</h3>${renderIngredients(r.ingredients)}</div>
-      <div class="instructions-box"><h3>Instructions</h3>${r.steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><p>${escapeHTML(s)}</p></div>`).join('')}</div>
+      <div class="ingredients-box"><h2>Ingredients</h2>${renderIngredients(r.ingredients)}</div>
+      <div class="instructions-box"><h2>Instructions</h2>${r.steps.map((s,i)=>`<div class="step"><div class="step-num" aria-hidden="true">${i+1}</div><p>${escapeHTML(s)}</p></div>`).join('')}</div>
     </div>`;
+  refreshEditorButtons();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
   setActiveNav('detail');
@@ -849,236 +971,357 @@ function openDetail(id, fromHistory) {
   if (!fromHistory) pushView({ view: 'detail', id });
 }
 
-// the in-page "Back to Recipes" button steps the browser back, so it stays in
-// sync with Safari's Back button and doesn't pile up duplicate history entries
-function goBackToRecipes() { history.back(); }
+// Edit and Delete only show up once the editor password has been entered
+function refreshEditorButtons() {
+  const disp = isEditor ? 'flex' : 'none';
+  document.getElementById('edit-btn').style.display = disp;
+  document.getElementById('delete-btn').style.display = disp;
+}
 
+// ── PDF download ─────────────────────────────────────────
 async function downloadRecipePDF() {
   const btn = document.getElementById('download-btn');
+  const restoreBtn = () => {
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg> Download PDF`;
+    btn.style.pointerEvents = '';
+    btn.style.opacity = '';
+  };
+
   btn.textContent = 'Generating...';
   btn.style.pointerEvents = 'none';
   btn.style.opacity = '0.6';
 
-  if (!window.jspdf) {
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-      s.onload = resolve; s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
+  // everything below is wrapped so a failed script load (bad wifi, blocked CDN)
+  // can't leave the button stuck saying "Generating..." forever
+  try {
+    if (!window.jspdf) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Could not load the PDF library'));
+        document.head.appendChild(s);
+      });
+    }
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'letter', orientation: 'portrait' });
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'letter', orientation: 'portrait' });
 
-  const category = document.querySelector('.detail-category')?.textContent || '';
-  const title = document.querySelector('.detail-title')?.textContent || 'Recipe';
-  const metaItems = [...document.querySelectorAll('.detail-meta span')].map(s => s.textContent);
-  const notes = document.querySelector('#detail-content p[style]')?.textContent || '';
-  const ingredients = [...document.querySelectorAll('.ingredients-box li')].map(li => ({
-    text: li.textContent.trim(),
-    isSection: li.classList.contains('ing-section-title')
-  }));
-  const steps = [...document.querySelectorAll('.step p')].map(p => p.textContent.trim());
+    const category = document.querySelector('.detail-category')?.textContent || '';
+    const title = document.querySelector('.detail-title')?.textContent || 'Recipe';
+    const metaItems = [...document.querySelectorAll('.detail-meta span')].map(s => s.textContent);
+    const notes = document.querySelector('.detail-notes')?.textContent || '';
+    const ingredients = [...document.querySelectorAll('.ingredients-box li')].map(li => ({
+      text: li.textContent.trim(),
+      isSection: li.classList.contains('ing-section-title')
+    }));
+    const steps = [...document.querySelectorAll('.step p')].map(p => p.textContent.trim());
 
-  // plain black / white / grey, single column, top to bottom — easy to follow
-  const BLACK = [25, 25, 25];
-  const GREY = [115, 115, 115];
-  const LIGHT = [205, 205, 205];
+    // plain black / white / grey, single column, top to bottom — easy to follow
+    const BLACK = [25, 25, 25];
+    const GREY = [115, 115, 115];
+    const LIGHT = [205, 205, 205];
 
-  const margin = 20;
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const maxW = pageW - margin * 2;
-  let y = margin;
+    const margin = 20;
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const maxW = pageW - margin * 2;
+    let y = margin;
 
-  // start a new page if the next thing won't fit
-  const need = (h) => { if (y + h > pageH - margin) { doc.addPage(); y = margin; } };
+    // start a new page if the next thing won't fit
+    const need = (h) => { if (y + h > pageH - margin) { doc.addPage(); y = margin; } };
 
-  // ── masthead ──
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(...GREY);
-  doc.text('DORN FAMILY RECIPES', margin, y);
-  doc.text(new Date().toLocaleDateString(), pageW - margin, y, { align: 'right' });
-  y += 3;
-  doc.setDrawColor(...BLACK); doc.setLineWidth(0.4);
-  doc.line(margin, y, pageW - margin, y);
-  y += 10;
-
-  // ── category ──
-  if (category) {
-    doc.setFont('helvetica', 'bold');
+    // ── masthead ──
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(...GREY);
-    doc.text(category.toUpperCase(), margin, y);
-    y += 7;
-  }
-
-  // ── title ──
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
-  doc.setTextColor(...BLACK);
-  doc.splitTextToSize(title, maxW).forEach(line => { need(9); doc.text(line, margin, y); y += 9; });
-  y += 2;
-
-  // ── meta (time / serves / by) between two thin rules ──
-  if (metaItems.length) {
-    doc.setDrawColor(...LIGHT); doc.setLineWidth(0.2);
-    doc.line(margin, y, pageW - margin, y); y += 5;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...GREY);
-    doc.text(metaItems.join('     ·     '), margin, y);
-    y += 4;
-    doc.line(margin, y, pageW - margin, y); y += 9;
-  }
-
-  // ── notes ──
-  if (notes) {
-    doc.setFont('helvetica', 'italic');
-    doc.setFontSize(9.5);
-    doc.setTextColor(...GREY);
-    doc.splitTextToSize(notes, maxW).forEach(line => { need(6); doc.text(line, margin, y); y += 5; });
-    y += 6;
-  }
-
-  // bold section heading with an underline rule
-  const heading = (label) => {
-    need(15);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(...BLACK);
-    doc.text(label, margin, y);
+    doc.text('DORN FAMILY RECIPES', margin, y);
+    doc.text(new Date().toLocaleDateString(), pageW - margin, y, { align: 'right' });
     y += 3;
     doc.setDrawColor(...BLACK); doc.setLineWidth(0.4);
     doc.line(margin, y, pageW - margin, y);
-    y += 7;
-  };
+    y += 10;
 
-  // ── ingredients ──
-  if (ingredients.length) {
-    heading('Ingredients');
-    ingredients.forEach(ing => {
-      if (ing.isSection) {
-        y += 2;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(10.5);
-        doc.setTextColor(...BLACK);
-        doc.splitTextToSize(ing.text, maxW).forEach(line => { need(6); doc.text(line, margin, y); y += 5.5; });
-        y += 1.5;
-      } else {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.splitTextToSize(ing.text, maxW - 6).forEach((line, idx) => {
-          need(6);
-          if (idx === 0) { doc.setFillColor(...GREY); doc.rect(margin + 0.5, y - 1.7, 1.5, 1.5, 'F'); }
-          doc.setTextColor(...BLACK);
-          doc.text(line, margin + 5, y);
-          y += 5.5;
-        });
-      }
-    });
-    y += 6;
-  }
+    // ── category ──
+    if (category) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...GREY);
+      doc.text(category.toUpperCase(), margin, y);
+      y += 7;
+    }
 
-  // ── instructions ──
-  if (steps.length) {
-    heading('Instructions');
-    steps.forEach((step, i) => {
-      const num = (i + 1) + '.';
-      doc.setFontSize(10);
-      doc.splitTextToSize(step, maxW - 9).forEach((line, idx) => {
-        need(6.5);
-        if (idx === 0) {
+    // ── title ──
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(...BLACK);
+    doc.splitTextToSize(title, maxW).forEach(line => { need(9); doc.text(line, margin, y); y += 9; });
+    y += 2;
+
+    // ── meta (time / serves / by) between two thin rules ──
+    if (metaItems.length) {
+      doc.setDrawColor(...LIGHT); doc.setLineWidth(0.2);
+      doc.line(margin, y, pageW - margin, y); y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...GREY);
+      doc.text(metaItems.join('     ·     '), margin, y);
+      y += 4;
+      doc.line(margin, y, pageW - margin, y); y += 9;
+    }
+
+    // ── notes ──
+    if (notes) {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(9.5);
+      doc.setTextColor(...GREY);
+      doc.splitTextToSize(notes, maxW).forEach(line => { need(6); doc.text(line, margin, y); y += 5; });
+      y += 6;
+    }
+
+    // bold section heading with an underline rule
+    const heading = (label) => {
+      need(15);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(...BLACK);
+      doc.text(label, margin, y);
+      y += 3;
+      doc.setDrawColor(...BLACK); doc.setLineWidth(0.4);
+      doc.line(margin, y, pageW - margin, y);
+      y += 7;
+    };
+
+    // ── ingredients ──
+    if (ingredients.length) {
+      heading('Ingredients');
+      ingredients.forEach(ing => {
+        if (ing.isSection) {
+          y += 2;
           doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10.5);
           doc.setTextColor(...BLACK);
-          doc.text(num, margin, y);
+          doc.splitTextToSize(ing.text, maxW).forEach(line => { need(6); doc.text(line, margin, y); y += 5.5; });
+          y += 1.5;
+        } else {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          doc.splitTextToSize(ing.text, maxW - 6).forEach((line, idx) => {
+            need(6);
+            if (idx === 0) { doc.setFillColor(...GREY); doc.rect(margin + 0.5, y - 1.7, 1.5, 1.5, 'F'); }
+            doc.setTextColor(...BLACK);
+            doc.text(line, margin + 5, y);
+            y += 5.5;
+          });
         }
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(...BLACK);
-        doc.text(line, margin + 9, y);
-        y += 5.8;
       });
-      y += 2.5;
-    });
+      y += 6;
+    }
+
+    // ── instructions ──
+    if (steps.length) {
+      heading('Instructions');
+      steps.forEach((step, i) => {
+        const num = (i + 1) + '.';
+        doc.setFontSize(10);
+        doc.splitTextToSize(step, maxW - 9).forEach((line, idx) => {
+          need(6.5);
+          if (idx === 0) {
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...BLACK);
+            doc.text(num, margin, y);
+          }
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(...BLACK);
+          doc.text(line, margin + 9, y);
+          y += 5.8;
+        });
+        y += 2.5;
+      });
+    }
+
+    // ── page numbers ──
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...GREY);
+      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 10, { align: 'right' });
+    }
+
+    const safeName = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    doc.save(`${safeName}.pdf`);
+  } catch (e) {
+    console.error(e);
+    alert("Couldn't build the PDF right now. Check your connection and try again — or use your browser's Print menu and save as PDF.");
+  } finally {
+    restoreBtn();
   }
-
-  // ── page numbers ──
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let p = 1; p <= totalPages; p++) {
-    doc.setPage(p);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...GREY);
-    doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 10, { align: 'right' });
-  }
-
-  const safeName = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-  doc.save(`${safeName}.pdf`);
-
-  btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg> Download PDF`;
-  btn.style.pointerEvents = '';
-  btn.style.opacity = '';
 }
 
+// ── Adding and editing recipes ───────────────────────────
 function populateCuisineSuggestions() {
   const cuisines = [...new Set(allRecipes.map(r => r.cuisine).filter(Boolean))].sort();
   const dl = document.getElementById('cuisine-suggestions');
   if (dl) dl.innerHTML = cuisines.map(c => `<option value="${escapeHTML(c)}">`).join('');
 }
 
-// saves a new recipe!
-async function saveRecipe() {
-  const name = document.getElementById('f-name').value.trim();
-  const category = document.getElementById('f-category').value;
-  const submitted_by = document.getElementById('f-submitted-by').value.trim();
-  const ingredients = document.getElementById('f-ingredients').value.trim().split('\n').map(l => l.trim()).filter(Boolean);
-  const steps = document.getElementById('f-instructions').value.trim().split('\n').filter(Boolean);
-  const cuisine = document.getElementById('f-cuisine').value.trim();
-  const course = document.getElementById('f-course').value;
+// cuisine is a free-text box, so "italian", "Italian" and "ITALIAN" used to
+// become three separate filter buttons. this matches what's already in the
+// collection first, and otherwise title-cases whatever was typed.
+function normalizeCuisine(input) {
+  const val = (input || '').trim();
+  if (!val) return null;
+  const existing = [...new Set(allRecipes.map(r => r.cuisine).filter(Boolean))];
+  const match = existing.find(c => c.toLowerCase() === val.toLowerCase());
+  if (match) return match;
+  return val.replace(/[^\s-]+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
 
-  if (!name || !category || !submitted_by || !ingredients.length || !steps.length) {
-    alert('Please fill in the name, category, submitted by, ingredients, and instructions.');
+const FORM_FIELDS = ['f-name','f-category','f-submitted-by','f-cuisine','f-course','f-time','f-servings','f-ingredients','f-instructions','f-notes'];
+function clearForm() { FORM_FIELDS.forEach(id => { document.getElementById(id).value = ''; }); }
+
+// reads the form into the shape Supabase expects
+function readForm() {
+  const val = id => document.getElementById(id).value.trim();
+  return {
+    name: val('f-name'),
+    category: document.getElementById('f-category').value,
+    submitted_by: val('f-submitted-by'),
+    cuisine: normalizeCuisine(val('f-cuisine')),
+    course: document.getElementById('f-course').value || null,
+    time: val('f-time'),
+    servings: val('f-servings'),
+    // both of these trim each line now — a line of just spaces used to survive
+    // into the instructions and render as an empty numbered step
+    ingredients: val('f-ingredients').split('\n').map(l => l.trim()).filter(Boolean),
+    steps: val('f-instructions').split('\n').map(l => l.trim()).filter(Boolean),
+    notes: val('f-notes')
+  };
+}
+
+// saves a new recipe, or updates the one being edited
+async function saveRecipe() {
+  const recipe = readForm();
+
+  if (!recipe.name || !recipe.category || !recipe.submitted_by || !recipe.ingredients.length || !recipe.steps.length) {
+    showMsg('error-msg', 'Add a name, category, who it\u2019s from, ingredients, and instructions before saving.');
+    hideMsg('success-msg');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
 
   const saveBtn = document.getElementById('save-btn');
-  saveBtn.textContent = 'Saving...';
+  const editing = editingId !== null;
+  const idBeingEdited = editingId;
+  saveBtn.textContent = editing ? 'Updating...' : 'Saving...';
   saveBtn.classList.add('saving-btn');
 
   try {
-    const newRecipe = {
-      name,
-      category,
-      submitted_by,
-      cuisine: cuisine || null,
-      course: course || null,
-      time: document.getElementById('f-time').value.trim(),
-      servings: document.getElementById('f-servings').value.trim(),
-      ingredients,
-      steps,
-      notes: document.getElementById('f-notes').value.trim()
-    };
-
-    const saved = await insertRecipe(newRecipe);
-    if (saved && saved.length) allRecipes.unshift(saved[0]);
+    if (editing) {
+      const saved = await updateRecipeRow(idBeingEdited, recipe);
+      const i = allRecipes.findIndex(r => r.id === idBeingEdited);
+      if (i !== -1) allRecipes[i] = (saved && saved.length) ? saved[0] : { ...allRecipes[i], ...recipe };
+    } else {
+      const saved = await insertRecipe(recipe);
+      if (saved && saved.length) allRecipes.unshift(saved[0]);
+    }
 
     populateCuisineSuggestions();
     buildCatFilters();
-    ['f-name','f-category','f-submitted-by','f-cuisine','f-course','f-time','f-servings','f-ingredients','f-instructions','f-notes']
-      .forEach(id => { document.getElementById(id).value = ''; });
+    renderHome();      // home stats + Recently Added used to go stale until you navigated
+    filterRecipes();
 
-    document.getElementById('success-msg').style.display = 'block';
-    document.getElementById('error-msg').style.display = 'none';
-    setTimeout(() => document.getElementById('success-msg').style.display = 'none', 4000);
+    hideMsg('error-msg');
+    if (editing) {
+      exitEditMode();
+      openDetail(idBeingEdited); // drop you straight back onto the updated recipe
+    } else {
+      clearForm();
+      showMsg('success-msg', 'Recipe saved! Find it in the Recipes page.');
+      setTimeout(() => hideMsg('success-msg'), 4000);
+    }
   } catch (e) {
     console.error(e);
-    document.getElementById('error-msg').style.display = 'block';
-    document.getElementById('success-msg').style.display = 'none';
+    showMsg('error-msg', editing
+      ? "Couldn't save those changes. Check your connection and try again."
+      : "Couldn't save the recipe. Check your connection and try again.");
+    hideMsg('success-msg');
   } finally {
-    saveBtn.textContent = 'Save Recipe';
+    saveBtn.textContent = editingId !== null ? 'Update Recipe' : 'Save Recipe';
     saveBtn.classList.remove('saving-btn');
+  }
+}
+
+// loads the recipe currently on screen back into the form
+function startEditRecipe() {
+  const raw = allRecipes.find(x => x.id === currentDetailId);
+  if (!raw) return;
+  const r = normalize(raw);
+
+  showPage('add', false, { keepEdit: true });
+
+  document.getElementById('f-name').value = r.name || '';
+  document.getElementById('f-category').value = r.category || '';
+  document.getElementById('f-submitted-by').value = r.submittedBy || '';
+  document.getElementById('f-cuisine').value = r.cuisine || '';
+  document.getElementById('f-course').value = r.course || '';
+  document.getElementById('f-time').value = r.time || '';
+  document.getElementById('f-servings').value = r.servings || '';
+  document.getElementById('f-ingredients').value = (r.ingredients || []).join('\n');
+  document.getElementById('f-instructions').value = (r.steps || []).join('\n');
+  document.getElementById('f-notes').value = r.notes || '';
+
+  editingId = r.id;
+  document.getElementById('add-heading').textContent = 'Edit Recipe';
+  document.getElementById('edit-banner-name').textContent = r.name;
+  document.getElementById('edit-banner').style.display = 'block';
+  document.getElementById('save-btn').textContent = 'Update Recipe';
+  document.getElementById('cancel-edit-btn').style.display = 'inline-block';
+  hideMsg('success-msg'); hideMsg('error-msg');
+}
+
+// puts the form back into "add a new recipe" mode.
+// bails out early if we weren't editing, so switching tabs mid-recipe
+// doesn't wipe out something you were halfway through typing.
+function exitEditMode() {
+  if (editingId === null) return;
+  editingId = null;
+  clearForm();
+  document.getElementById('add-heading').textContent = 'Add a New Recipe';
+  document.getElementById('edit-banner').style.display = 'none';
+  document.getElementById('save-btn').textContent = 'Save Recipe';
+  document.getElementById('cancel-edit-btn').style.display = 'none';
+}
+
+function cancelEdit() {
+  const id = editingId;
+  exitEditMode();
+  if (id !== null) openDetail(id);
+  else showPage('recipes');
+}
+
+async function deleteCurrentRecipe() {
+  const raw = allRecipes.find(x => x.id === currentDetailId);
+  if (!raw) return;
+  if (!confirm(`Delete "${raw.name}"? This can't be undone.`)) return;
+
+  const btn = document.getElementById('delete-btn');
+  btn.classList.add('saving-btn');
+  try {
+    await deleteRecipeRow(raw.id);
+    allRecipes = allRecipes.filter(r => r.id !== raw.id);
+    populateCuisineSuggestions();
+    renderHome();
+    buildCatFilters();
+    filterRecipes();
+    showPage('recipes');
+  } catch (e) {
+    console.error(e);
+    alert("Couldn't delete that recipe. Check your connection and try again.");
+  } finally {
+    btn.classList.remove('saving-btn');
   }
 }
 
@@ -1091,7 +1334,11 @@ async function saveSuggestion() {
   const text = document.getElementById('sug-text').value.trim();
   const category = document.getElementById('sug-category').value;
   const name = document.getElementById('sug-name').value.trim();
-  if (!text) { alert('Please type your suggestion first.'); return; }
+  if (!text) {
+    showMsg('sug-error', 'Type your suggestion before sending.');
+    hideMsg('sug-success');
+    return;
+  }
 
   const btn = document.getElementById('sug-save-btn');
   btn.textContent = 'Sending...';
@@ -1103,13 +1350,13 @@ async function saveSuggestion() {
       body: JSON.stringify({ suggestion: text, category: category || null, name: name || null })
     });
     ['sug-text', 'sug-category', 'sug-name'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('sug-success').style.display = 'block';
-    document.getElementById('sug-error').style.display = 'none';
-    setTimeout(() => document.getElementById('sug-success').style.display = 'none', 4000);
+    showMsg('sug-success', 'Form Received! Thank you.');
+    hideMsg('sug-error');
+    setTimeout(() => hideMsg('sug-success'), 4000);
   } catch (e) {
     console.error(e);
-    document.getElementById('sug-error').style.display = 'block';
-    document.getElementById('sug-success').style.display = 'none';
+    showMsg('sug-error', "That didn't go through. Check your connection and try again.");
+    hideMsg('sug-success');
   } finally {
     btn.textContent = 'Send Suggestion';
     btn.classList.remove('saving-btn');
@@ -1123,7 +1370,8 @@ function openEditorGate() {
   if (gate.style.display === 'block') document.getElementById('editor-pw').focus();
 }
 
-// correct password -> hide the form, show the read-only inbox
+// correct password -> hide the form, show the read-only inbox,
+// and switch on the Edit/Delete buttons on recipe pages for this session
 async function unlockInbox() {
   const val = document.getElementById('editor-pw').value;
   const err = document.getElementById('editor-pw-error');
@@ -1134,6 +1382,9 @@ async function unlockInbox() {
     return;
   }
   err.textContent = '';
+  isEditor = true;
+  rememberFlag('dorn_editor');
+  refreshEditorButtons();
   document.getElementById('suggest-form-area').style.display = 'none';
   document.getElementById('editor-gate').style.display = 'none';
   document.getElementById('editor-dot').style.display = 'none';
@@ -1173,6 +1424,7 @@ function resetSuggestionsView() {
   set('editor-inbox', 'none');
   set('editor-gate', 'none');
   set('editor-dot', 'block');
+  hideMsg('sug-success'); hideMsg('sug-error');
 }
 
 // ── builds the cut-out "ransom note" wordmark in the top banner ──
@@ -1183,7 +1435,9 @@ function buildRansomHeader(){
   const wrap = document.getElementById('nav-ransom');
   if(!wrap || wrap.dataset.built) return;
   wrap.dataset.built = '1';
-  const fonts = ["'Anton',sans-serif","'Archivo Black',sans-serif","'Shrikhand',serif","'Oswald',sans-serif","'Special Elite',monospace","'Permanent Marker',cursive","'DM Serif Display',serif","Georgia,serif"];
+  // 6 faces now instead of 8. the multiplier is coprime with the list length
+  // so the fonts actually cycle instead of repeating every other letter.
+  const fonts = ["'Anton',sans-serif","'Shrikhand',serif","'Special Elite',monospace","'Permanent Marker',cursive","Georgia,serif","'Space Mono',monospace"];
   // no navy in here — the banner itself is navy, so letters skip that color
   const scraps = [
     {bg:'#C8642B',fg:'#2B1A0E'}, {bg:'#2C7E76',fg:'#EDE4CB'}, {bg:'#E2A52C',fg:'#3A2A06'},
@@ -1202,7 +1456,7 @@ function buildRansomHeader(){
       const scrap = scraps[(i*5+2) % scraps.length];
       s.style.background = scrap.bg;
       s.style.color = scrap.fg;
-      s.style.fontFamily = fonts[(i*3+1) % fonts.length];
+      s.style.fontFamily = fonts[(i*5+1) % fonts.length];
       s.style.transform = 'rotate('+rots[i % rots.length]+'deg)';
       s.style.fontSize = (0.92 + ((i*5)%4)*0.04) + 'em';
       s.style.top = ((((i*3)%5)-2)*1.5) + 'px';   // gentle vertical offset only
@@ -1214,6 +1468,12 @@ function buildRansomHeader(){
   });
 }
 buildRansomHeader();
+
+// if you already typed the password earlier this session, skip the login on
+// refresh. sessionStorage clears when the tab closes, so it isn't a permanent
+// bypass — closing the tab puts the password screen back.
+if (hasFlag('dorn_unlocked')) enterSite();
+else document.getElementById('pw-input').focus();
 </script>
 </body>
 </html>
